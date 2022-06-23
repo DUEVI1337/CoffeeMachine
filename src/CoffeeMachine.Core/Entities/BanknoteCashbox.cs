@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoffeeMachine.Core.Models
+namespace CoffeeMachine.Core.Entities
 {
-    public class Coffee
+    public class BanknoteCashbox
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CoffeeId { get; set; }
-
+        public int BanknoteId { get; set; }
         [Required]
-        public string Name { get; set; }
-
+        public int Denomination { get; set; }
         [Required]
-        public int Price { get; set; }
+        public int CountBanknote { get; set; }
     }
 }

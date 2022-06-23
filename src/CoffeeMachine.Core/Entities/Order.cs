@@ -4,9 +4,11 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
-namespace CoffeeMachine.Core.Models
+namespace CoffeeMachine.Core.Entities
 {
+    [Index (nameof(PaymentId), IsUnique = true)]
     public class Order
     {
         [ForeignKey("Coffee")]
