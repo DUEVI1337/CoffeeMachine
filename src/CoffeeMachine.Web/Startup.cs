@@ -1,6 +1,9 @@
+using CoffeeMachine.Infrastructure;
+using CoffeeMachine.Infrastructure.Repositories;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using CoffeeMachine.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,8 +11,6 @@ using Microsoft.OpenApi.Models;
 
 namespace CoffeeMachine.Web
 {
-    using Microsoft.EntityFrameworkCore;
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -19,21 +20,6 @@ namespace CoffeeMachine.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CoffeeMachine.Web", Version = "v1" });
-            });
-            services.AddDbContext<DataContext>(opt =>
-            {
-                opt.UseNpgsql(Configuration.GetConnectionString("ConStr"));
-            });
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -41,7 +27,7 @@ namespace CoffeeMachine.Web
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoffeeMachine.Web v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoffeeMachine v1"));
             }
 
             app.UseHttpsRedirection();
@@ -50,10 +36,23 @@ namespace CoffeeMachine.Web
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
             {
-                endpoints.MapControllers();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CoffeeMachine", Version = "v1" });
             });
+            services.AddDbContext<DataContext>(opt =>
+            {
+                opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
+            });
+            services.AddScoped<CoffeeRepository>()
+                .AddScoped<UnitOfWork>();
         }
     }
 }

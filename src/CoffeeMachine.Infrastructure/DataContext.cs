@@ -1,4 +1,7 @@
-﻿using CoffeeMachine.Core.Entities;
+﻿using System;
+
+using CoffeeMachine.Core.Entities;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMachine.Infrastructure
@@ -7,35 +10,38 @@ namespace CoffeeMachine.Infrastructure
     {
         public DataContext(DbContextOptions<DataContext> opt) : base(opt)
         {
-            
         }
 
+        /// <summary>
+        /// <see cref="BanknoteCashBox"/> table in database
+        /// </summary>
+        public DbSet<BanknoteCashBox> BanknoteCashBoxes { get; set; }
+        /// <summary>
+        /// <see cref="Coffee"/> table in database
+        /// </summary>
         public DbSet<Coffee> Coffees { get; set; }
-        public DbSet<Order> Orders { get; set; }
+        /// <summary>
+        /// <see cref="Payment"/> table in database
+        /// </summary>
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<BanknoteCashbox> BanknoteCashboxes { get; set; }
 
+        /// <summary>
+        /// init <see cref="Coffee"/>, <see cref="BanknoteCashBox"/> table in database 
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Order>().HasKey(x => new { x.CoffeeId, x.PaymentId });
-            builder.Entity<Coffee>().HasData(
-                new Coffee[]
-                {
-                    new Coffee { CoffeeId = 1, Name = "Капучино", Price = 600},
-                    new Coffee { CoffeeId = 2, Name = "Латте", Price = 850},
-                    new Coffee { CoffeeId = 3, Name = "Американо", Price = 900}
-                });
-            builder.Entity<BanknoteCashbox>().HasData(
-                new BanknoteCashbox[]
-                {
-                    new BanknoteCashbox { BanknoteId = 1, Denomination = 50, CountBanknote = 50},
-                    new BanknoteCashbox { BanknoteId = 2, Denomination = 100, CountBanknote = 40},
-                    new BanknoteCashbox { BanknoteId = 3, Denomination = 200, CountBanknote = 30},
-                    new BanknoteCashbox { BanknoteId = 4, Denomination = 500, CountBanknote = 20},
-                    new BanknoteCashbox { BanknoteId = 5, Denomination = 1000, CountBanknote = 15},
-                    new BanknoteCashbox { BanknoteId = 6, Denomination = 2000, CountBanknote = 10},
-                    new BanknoteCashbox { BanknoteId = 7, Denomination = 5000, CountBanknote = 5},
-                });
+            builder.Entity<Coffee>().HasData(new Coffee { CoffeeId = Guid.NewGuid(), Name = "Капучино", Price = 600 },
+                new Coffee { CoffeeId = Guid.NewGuid(), Name = "Латте", Price = 850 },
+                new Coffee { CoffeeId = Guid.NewGuid(), Name = "Американо", Price = 900 });
+            builder.Entity<BanknoteCashBox>().HasData(
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 50, CountBanknote = 50 },
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 100, CountBanknote = 40 },
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 30 },
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 500, CountBanknote = 20 },
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 1000, CountBanknote = 15 },
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 10 },
+                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 5 });
         }
     }
 }

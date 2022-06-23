@@ -1,25 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 
 namespace CoffeeMachine.Core.Entities
 {
     public class Payment
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PaymentId { get; set; }
-
-        [Required]
-        public int ContributedMoney { get; set; }
-
+        /// <summary>
+        /// money that coffee machine returned person 
+        /// </summary>
         [Required]
         public int CashDepositAmount { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        /// <summary>
+        /// money that person contributed in coffee machine
+        /// </summary>
+        [Required]
+        public int ContributedMoney { get; set; }
+
+        /// <summary>
+        /// id coffee that was buy
+        /// </summary>
+        public Coffee Coffee { get; set; }
+
+        /// <summary>
+        /// id in database table
+        /// </summary>
+        [Key]
+        public Guid PaymentId { get; set; }
     }
 }

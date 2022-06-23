@@ -1,21 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoffeeMachine.Core.Entities
 {
-    public class BanknoteCashbox
+    public class BanknoteCashBox
     {
+        /// <summary>
+        /// id in table database
+        /// </summary>
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int BanknoteId { get; set; }
-        [Required]
-        public int Denomination { get; set; }
+        public Guid BanknoteId { get; set; }
+
+        /// <summary>
+        /// count banknote in coffee machine
+        /// </summary>
         [Required]
         public int CountBanknote { get; set; }
+
+        /// <summary>
+        /// denomination banknote (100руб, 200руб)
+        /// </summary>
+        [Required]
+        public int Denomination { get; set; }
     }
 }
