@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CoffeeMachine.Core.Interfaces.Repositories
+namespace CoffeeMachine.Domain.Interfaces.Repositories
 {
     /// <summary>
     /// interface for generic repository

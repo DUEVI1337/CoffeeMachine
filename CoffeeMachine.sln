@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31911.196
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B7AC0A46-D0D4-49F4-850E-1D35DC4CBFBE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeMachine.Web", "src\CoffeeMachine.Web\CoffeeMachine.Web.csproj", "{F6FCB4BE-CBC7-4237-AECE-607D6689367A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeMachine.Core", "src\CoffeeMachine.Core\CoffeeMachine.Core.csproj", "{2E24B020-75F2-4835-AF51-A60347FCF607}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeMachine.Domain", "src\CoffeeMachine.Domain\CoffeeMachine.Domain.csproj", "{2E24B020-75F2-4835-AF51-A60347FCF607}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeMachine.Infrastructure", "src\CoffeeMachine.Infrastructure\CoffeeMachine.Infrastructure.csproj", "{D271B8AF-E477-442F-B973-694434F611E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeMachine.Application", "src\CoffeeMachine.Application\CoffeeMachine.Application.csproj", "{C94E9F1A-86C3-4069-8380-A8128574154C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{D271B8AF-E477-442F-B973-694434F611E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D271B8AF-E477-442F-B973-694434F611E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D271B8AF-E477-442F-B973-694434F611E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C94E9F1A-86C3-4069-8380-A8128574154C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C94E9F1A-86C3-4069-8380-A8128574154C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C94E9F1A-86C3-4069-8380-A8128574154C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C94E9F1A-86C3-4069-8380-A8128574154C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +43,7 @@ Global
 		{F6FCB4BE-CBC7-4237-AECE-607D6689367A} = {B7AC0A46-D0D4-49F4-850E-1D35DC4CBFBE}
 		{2E24B020-75F2-4835-AF51-A60347FCF607} = {B7AC0A46-D0D4-49F4-850E-1D35DC4CBFBE}
 		{D271B8AF-E477-442F-B973-694434F611E5} = {B7AC0A46-D0D4-49F4-850E-1D35DC4CBFBE}
+		{C94E9F1A-86C3-4069-8380-A8128574154C} = {B7AC0A46-D0D4-49F4-850E-1D35DC4CBFBE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFA34937-7C57-4BE2-A346-6F1F8958DA00}

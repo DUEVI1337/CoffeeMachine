@@ -2,8 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoffeeMachine.Core.Entities
+namespace CoffeeMachine.Domain.Entities
 {
+    /// <summary>
+    /// banknote in cashbox coffee machine
+    /// </summary>
     public class BanknoteCashBox
     {
         /// <summary>

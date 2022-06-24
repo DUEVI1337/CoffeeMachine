@@ -1,6 +1,6 @@
 ﻿using System;
 
-using CoffeeMachine.Core.Entities;
+using CoffeeMachine.Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
 

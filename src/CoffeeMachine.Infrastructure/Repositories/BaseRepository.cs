@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using CoffeeMachine.Core.Interfaces.Repositories;
+using CoffeeMachine.Domain.Interfaces.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoffeeMachine.Core.Entities
+namespace CoffeeMachine.Domain.Entities
 {
     public class Coffee
     {
@@ -14,15 +14,18 @@ namespace CoffeeMachine.Core.Entities
         public Guid CoffeeId { get; set; }
 
         /// <summary>
-        /// name coffee
+        /// brand of coffee
         /// </summary>
         [Required]
         public string Name { get; set; }
 
+        /// <summary>
+        /// navigation property for relationship (Payment list for this coffee)
+        /// </summary>
         public ICollection<Payment> Payments { get; set; }
 
         /// <summary>
-        /// price coffee
+        /// price of coffee
         /// </summary>
         [Required]
         public int Price { get; set; }

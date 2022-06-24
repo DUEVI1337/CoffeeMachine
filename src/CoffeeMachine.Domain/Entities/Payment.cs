@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoffeeMachine.Core.Entities
+namespace CoffeeMachine.Domain.Entities
 {
+    /// <summary>
+    /// payment for selected coffee
+    /// </summary>
     public class Payment
     {
         /// <summary>

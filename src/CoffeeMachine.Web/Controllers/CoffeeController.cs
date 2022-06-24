@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using CoffeeMachine.Core.Entities;
+using CoffeeMachine.Application.Mappers;
+using CoffeeMachine.Domain.DTO;
+using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace CoffeeMachine.Web.Controllers
 {
@@ -26,11 +28,10 @@ namespace CoffeeMachine.Web.Controllers
         /// get list coffee from database
         /// </summary>
         /// <returns><see cref="List{T}"/> where T <see cref="Coffee"/></returns>
+        /// <response code="200">return list of coffee from database</response>
         [HttpGet]
         [Route("ListCoffee")]
-        public async Task<ActionResult> GetListCoffee()
-        {
-            return Ok(await _uow.CoffeeRepo.GetAllAsync());
-        }
+        public async Task<List<CoffeeDto>> GetListCoffee() =>
+            Mapper.CoffeeListMapper(await _uow.CoffeeRepo.GetAllAsync());
     }
 }

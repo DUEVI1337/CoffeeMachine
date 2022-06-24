@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoffeeMachine.Core\CoffeeMachine.Core.csproj" />
+    <ProjectReference Include="..\CoffeeMachine.Domain\CoffeeMachine.Domain.csproj" />
   </ItemGroup>
 
 </Project>

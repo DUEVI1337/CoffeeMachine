@@ -1,4 +1,4 @@
-﻿using CoffeeMachine.Core.Entities;
+﻿using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Infrastructure.Repositories
 {

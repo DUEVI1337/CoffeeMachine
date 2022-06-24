@@ -1,3 +1,7 @@
+using System;
+using System.IO;
+using System.Reflection;
+
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
 
@@ -43,9 +47,14 @@ namespace CoffeeMachine.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(opt =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CoffeeMachine", Version = "v1" });
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "CoffeeMachine", Version = "v1" });
+
+                var xmlFileNameWeb = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlFileNameDomain = "CoffeeMachine.Domain.xml";
+                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameWeb));
+                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameDomain));
             });
             services.AddDbContext<DataContext>(opt =>
             {
