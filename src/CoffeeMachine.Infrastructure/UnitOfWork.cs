@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-using CoffeeMachine.Domain.Interfaces.Repositories;
 using CoffeeMachine.Domain.Entities;
+using CoffeeMachine.Domain.Interfaces.Repositories;
 using CoffeeMachine.Infrastructure.Repositories;
 
 namespace CoffeeMachine.Infrastructure

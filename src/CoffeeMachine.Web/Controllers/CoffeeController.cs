@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using CoffeeMachine.Application.Mappers;
+
+using CoffeeMachine.Application.Service.Interfaces;
 using CoffeeMachine.Domain.DTO;
 using CoffeeMachine.Domain.Entities;
-using CoffeeMachine.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace CoffeeMachine.Web.Controllers
 {
@@ -17,11 +17,26 @@ namespace CoffeeMachine.Web.Controllers
     [ApiController]
     public class CoffeeController : Controller
     {
-        private readonly UnitOfWork _uow;
+        private readonly ICoffeeService _coffeeService;
 
-        public CoffeeController(UnitOfWork uow)
+        public CoffeeController(ICoffeeService coffeeService)
         {
-            _uow = uow;
+            _coffeeService = coffeeService;
+        }
+
+        /// <summary>
+        /// get coffee by id from database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns><see cref="CoffeeDto"/> or null</returns>
+        /// <response code="200">return coffee from database</response>
+        [HttpGet]
+        [Route("Coffee/{id}")]
+        public async Task<CoffeeDto> GetCoffeeDtoById(string id)
+        {
+            if (!Guid.TryParse(id, out var idGuid))
+                return null;
+            return await _coffeeService.GetCoffeeDtoByIdAsync(idGuid);
         }
 
         /// <summary>
@@ -31,7 +46,9 @@ namespace CoffeeMachine.Web.Controllers
         /// <response code="200">return list of coffee from database</response>
         [HttpGet]
         [Route("ListCoffee")]
-        public async Task<List<CoffeeDto>> GetListCoffee() =>
-            Mapper.CoffeeListMapper(await _uow.CoffeeRepo.GetAllAsync());
+        public async Task<List<CoffeeDto>> GetListCoffeeDto()
+        {
+            return await _coffeeService.GetListCoffeeDtoAsync();
+        }
     }
 }

@@ -16,10 +16,12 @@ namespace CoffeeMachine.Infrastructure
         /// <see cref="BanknoteCashBox"/> table in database
         /// </summary>
         public DbSet<BanknoteCashBox> BanknoteCashBoxes { get; set; }
+
         /// <summary>
         /// <see cref="Coffee"/> table in database
         /// </summary>
         public DbSet<Coffee> Coffees { get; set; }
+
         /// <summary>
         /// <see cref="Payment"/> table in database
         /// </summary>

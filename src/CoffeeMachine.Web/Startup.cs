@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Reflection;
 
+using CoffeeMachine.Application.Service;
+using CoffeeMachine.Application.Service.Interfaces;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
 
@@ -61,7 +63,8 @@ namespace CoffeeMachine.Web
                 opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
             });
             services.AddScoped<CoffeeRepository>()
-                .AddScoped<UnitOfWork>();
+                .AddScoped<UnitOfWork>()
+                .AddScoped<ICoffeeService, CoffeeService>();
         }
     }
 }
