@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Service.Interfaces;
+using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.DTO;
 using CoffeeMachine.Domain.Entities;
 
@@ -11,32 +11,46 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoffeeMachine.Web.Controllers
 {
     /// <summary>
-    /// create order with coffee
+    /// work with entity <see cref="Coffee"/> in database.
     /// </summary>
     [Route("coffee/v1")]
     [ApiController]
     public class CoffeeController : Controller
     {
+        private readonly IBanknoteCashboxService _banknoteCashboxService;
         private readonly ICoffeeService _coffeeService;
 
-        public CoffeeController(ICoffeeService coffeeService)
+        public CoffeeController(ICoffeeService coffeeService, IBanknoteCashboxService banknoteCashboxService)
         {
             _coffeeService = coffeeService;
+            _banknoteCashboxService = banknoteCashboxService;
+        }
+
+        /// <summary>
+        /// checking possibility of buying coffee
+        /// </summary>
+        /// <param name="order">order person</param>
+        [HttpPost]
+        [Route("BuyCoffee")]
+        public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
+        {
+            var cashbox = await _banknoteCashboxService.GetCashboxAsync();
+            var coffee = await _coffeeService.GetCoffeeDtoByIdAsync(order.CoffeeId);
+            var clientMoney = _coffeeService.GetAmountClientMoney(order.Banknotes);
+            return _coffeeService.BuyCoffee(coffee.CoffeePrice, clientMoney, cashbox, (TypeDeal)order.TypeDeal);
         }
 
         /// <summary>
         /// get coffee by id from database
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">id coffee</param>
         /// <returns><see cref="CoffeeDto"/> or null</returns>
         /// <response code="200">return coffee from database</response>
         [HttpGet]
         [Route("Coffee/{id}")]
         public async Task<CoffeeDto> GetCoffeeDtoById(string id)
         {
-            if (!Guid.TryParse(id, out var idGuid))
-                return null;
-            return await _coffeeService.GetCoffeeDtoByIdAsync(idGuid);
+            return await _coffeeService.GetCoffeeDtoByIdAsync(id);
         }
 
         /// <summary>
@@ -45,7 +59,7 @@ namespace CoffeeMachine.Web.Controllers
         /// <returns><see cref="List{T}"/> where T <see cref="Coffee"/></returns>
         /// <response code="200">return list of coffee from database</response>
         [HttpGet]
-        [Route("ListCoffee")]
+        [Route("MenuCoffee")]
         public async Task<List<CoffeeDto>> GetListCoffeeDto()
         {
             return await _coffeeService.GetListCoffeeDtoAsync();

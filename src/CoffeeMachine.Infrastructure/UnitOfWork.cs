@@ -13,11 +13,24 @@ namespace CoffeeMachine.Infrastructure
     {
         private readonly DataContext _db;
 
-        public UnitOfWork(DataContext db, CoffeeRepository coffeeRepo)
+        public UnitOfWork(DataContext db, CoffeeRepository coffeeRepo, BalanceRepository balanceRepo,
+            BanknoteCashboxRepository banknoteCashBoxRepo)
         {
             _db = db;
             CoffeeRepo = coffeeRepo;
+            BalanceRepo = balanceRepo;
+            BanknoteCashboxRepo = banknoteCashBoxRepo;
         }
+
+        /// <summary>
+        /// property for DI (ability use basic methods for work with entity <see cref="Balance"/> in database)
+        /// </summary>
+        public IRepository<Balance> BalanceRepo { get; set; }
+
+        /// <summary>
+        /// property for DI (ability use basic methods for work with entity <see cref="Balance"/> in database)
+        /// </summary>
+        public IRepository<BanknoteCashBox> BanknoteCashboxRepo { get; set; }
 
         /// <summary>
         /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
+﻿using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.DTO;
 using CoffeeMachine.Domain.Entities;
 
@@ -11,18 +9,27 @@ namespace CoffeeMachine.Application.Mappers
     /// </summary>
     public class Mapper
     {
-        /// <summary>
-        /// map list 'Coffee' to list 'CoffeeDto'
-        /// </summary>
-        /// <param name="coffees"></param>
-        /// <returns><see cref="List{T}"/> where T <see cref="CoffeeDto"/></returns>
-        public static List<CoffeeDto> MapToListCoffeeDto(List<Coffee> coffees)
-        {
-            return coffees.Select(x => MapToCoffeeDto(x)).ToList();
-        }
+        #region MappersBalance
 
         /// <summary>
-        /// map 'Coffee' to 'CoffeeDto'
+        /// Convert <see cref="Balance"/> to <see cref="BalanceDto"/>
+        /// </summary>
+        /// <param name="balance"></param>
+        /// <returns><see cref="BalanceDto"/></returns>
+        public static BalanceDto MapToBalanceDto(Balance balance)
+        {
+            return new()
+            {
+                BalanceId = balance.BalanceId, EarnedMoney = balance.EarnedMoney, CoffeeId = balance.Coffee.CoffeeId
+            };
+        }
+
+        #endregion
+
+        #region MappersCoffe
+
+        /// <summary>
+        /// Convert <see cref="Coffee"/> to <see cref="CoffeeDto"/>
         /// </summary>
         /// <param name="coffee"></param>
         /// <returns><see cref="CoffeeDto"/></returns> 
@@ -31,5 +38,7 @@ namespace CoffeeMachine.Application.Mappers
             return new()
                 { CoffeeId = coffee.CoffeeId.ToString(), CoffeeName = coffee.Name, CoffeePrice = coffee.Price };
         }
+
+        #endregion
     }
 }

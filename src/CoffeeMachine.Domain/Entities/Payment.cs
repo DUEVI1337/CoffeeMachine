@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoffeeMachine.Domain.Entities
 {
@@ -11,21 +9,21 @@ namespace CoffeeMachine.Domain.Entities
     public class Payment
     {
         /// <summary>
-        /// money that coffee machine returned person 
+        /// id coffee that was buy
         /// </summary>
-        [Required]
-        public int CashDepositAmount { get; set; }
+        public Coffee Coffee { get; set; }
 
         /// <summary>
         /// money that person contributed in coffee machine
         /// </summary>
         [Required]
-        public int ContributedMoney { get; set; }
+        public int ClientMoney { get; set; }
 
         /// <summary>
-        /// id coffee that was buy
+        /// money that coffee machine returned person 
         /// </summary>
-        public Coffee Coffee { get; set; }
+        [Required]
+        public int Deal { get; set; }
 
         /// <summary>
         /// id in database table

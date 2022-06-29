@@ -1,13 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoffeeMachine.Domain.Entities
 {
     /// <summary>
     /// banknote in cashbox coffee machine
     /// </summary>
-    public class BanknoteCashBox
+    public class BanknoteCashBox : IComparable<BanknoteCashBox>
     {
         /// <summary>
         /// id in table database
@@ -26,5 +25,15 @@ namespace CoffeeMachine.Domain.Entities
         /// </summary>
         [Required]
         public int Denomination { get; set; }
+
+        /// <summary>
+        /// Specify property by which will sort List
+        /// </summary>
+        /// <param name="banknote"></param>
+        /// <returns></returns>
+        public int CompareTo(BanknoteCashBox banknote)
+        {
+            return Denomination.CompareTo(banknote.Denomination);
+        }
     }
 }

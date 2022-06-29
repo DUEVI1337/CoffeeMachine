@@ -24,7 +24,7 @@ namespace CoffeeMachine.Infrastructure.Repositories
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity"><inheritdoc/></param>
         public void Add(TEntity entity)
         {
             _db.Set<TEntity>().AddAsync(entity);
@@ -33,7 +33,7 @@ namespace CoffeeMachine.Infrastructure.Repositories
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity"><inheritdoc/></param>
         public void Delete(TEntity entity)
         {
             _db.Set<TEntity>().Remove(entity);
@@ -51,7 +51,7 @@ namespace CoffeeMachine.Infrastructure.Repositories
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
         public async Task<TEntity> GetByIdAsync(Guid id)
         {
@@ -61,7 +61,7 @@ namespace CoffeeMachine.Infrastructure.Repositories
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity"><inheritdoc/></param>
         public void Update(TEntity entity)
         {
             _db.Set<TEntity>().Update(entity);

@@ -13,6 +13,11 @@ namespace CoffeeMachine.Infrastructure
         }
 
         /// <summary>
+        /// <see cref="Balance"/> table in database
+        /// </summary>
+        public DbSet<Balance> Balances { get; set; }
+
+        /// <summary>
         /// <see cref="BanknoteCashBox"/> table in database
         /// </summary>
         public DbSet<BanknoteCashBox> BanknoteCashBoxes { get; set; }
@@ -21,6 +26,11 @@ namespace CoffeeMachine.Infrastructure
         /// <see cref="Coffee"/> table in database
         /// </summary>
         public DbSet<Coffee> Coffees { get; set; }
+
+        /// <summary>
+        /// <see cref="Income"/> table in database
+        /// </summary>
+        public DbSet<Income> Incomes { get; set; }
 
         /// <summary>
         /// <see cref="Payment"/> table in database

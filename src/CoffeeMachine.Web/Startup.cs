@@ -63,8 +63,12 @@ namespace CoffeeMachine.Web
                 opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
             });
             services.AddScoped<CoffeeRepository>()
+                .AddScoped<BalanceRepository>()
+                .AddScoped<BanknoteCashboxRepository>()
                 .AddScoped<UnitOfWork>()
-                .AddScoped<ICoffeeService, CoffeeService>();
+                .AddScoped<ICoffeeService, CoffeeService>()
+                .AddScoped<IBalanceService, BalanceService>()
+                .AddScoped<IBanknoteCashboxService, BanknoteCashboxService>();
         }
     }
 }

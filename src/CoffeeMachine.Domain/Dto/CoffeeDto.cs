@@ -1,8 +1,4 @@
-﻿
-using CoffeeMachine.Domain.Entities;
-using Swashbuckle.AspNetCore.Annotations;
-
-namespace CoffeeMachine.Domain.DTO
+﻿namespace CoffeeMachine.Domain.DTO
 {
     /// <summary>
     /// represent 'coffee' in database
@@ -14,11 +10,13 @@ namespace CoffeeMachine.Domain.DTO
         /// </summary>
         /// <example>6F9619FF-8B86-D011-B42D-00CF4FC964FF</example>
         public string CoffeeId { get; set; }
+
         /// <summary>
         /// name of coffee
         /// </summary>
         /// <example>Капучино</example>
         public string CoffeeName { get; set; }
+
         /// <summary>
         /// price of coffee
         /// </summary>

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace CoffeeMachine.Domain.Interfaces.Repositories
 {
     /// <summary>
-    /// interface for generic repository
+    /// For generic repository
     /// </summary>
     /// <typeparam name="TEntity">entity from database</typeparam>
     public interface IRepository<TEntity> where TEntity : class
@@ -13,13 +13,13 @@ namespace CoffeeMachine.Domain.Interfaces.Repositories
         /// <summary>
         /// add entity in database
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">addition object</param>
         void Add(TEntity entity);
 
         /// <summary>
         /// delete entity from database
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">deletion object</param>
         void Delete(TEntity entity);
 
         /// <summary>
@@ -31,14 +31,14 @@ namespace CoffeeMachine.Domain.Interfaces.Repositories
         /// <summary>
         /// get entity by him id from database
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">id of an object that you want found</param>
         /// <returns><see cref="TEntity"/></returns>
         Task<TEntity> GetByIdAsync(Guid id);
 
         /// <summary>
         /// update info about entity by him id in database
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">object that need update</param>
         void Update(TEntity entity);
     }
 }
