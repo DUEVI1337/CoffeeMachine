@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Service.Interfaces;
@@ -23,9 +24,28 @@ namespace CoffeeMachine.Application.Service
         /// <inheritdoc/>
         /// </summary>
         /// <returns></returns>
-        public async Task<List<BanknoteCashBox>> GetCashboxAsync()
+        public async Task<List<BanknoteCashbox>> GetCashboxAsync()
         {
             return await _uow.BanknoteCashboxRepo.GetAllAsync();
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="updatedCashbox"><inheritdoc/></param>
+        /// <returns><inheritdoc/></returns>
+        public async Task UpdateCashbox(List<BanknoteCashbox> updatedCashbox)
+        {
+            var cashbox = await _uow.BanknoteCashboxRepo.GetAllAsync();
+            foreach (var banknote in updatedCashbox)
+            {
+                if (cashbox.Select(x => x.BanknoteId).Contains(banknote.BanknoteId))
+                {
+                    cashbox.FirstOrDefault(x => x.BanknoteId == banknote.BanknoteId).CountBanknote =
+                        banknote.CountBanknote;
+                }
+            }
+            _uow.BanknoteCashboxRepo.UpdateRange(cashbox);
         }
     }
 }

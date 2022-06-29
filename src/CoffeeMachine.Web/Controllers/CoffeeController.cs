@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Service;
 using CoffeeMachine.Application.Service.Interfaces;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.DTO;
@@ -17,8 +18,8 @@ namespace CoffeeMachine.Web.Controllers
     [ApiController]
     public class CoffeeController : Controller
     {
-        private readonly IBanknoteCashboxService _banknoteCashboxService;
         private readonly ICoffeeService _coffeeService;
+        private readonly IBanknoteCashboxService _banknoteCashboxService;
 
         public CoffeeController(ICoffeeService coffeeService, IBanknoteCashboxService banknoteCashboxService)
         {
@@ -34,10 +35,12 @@ namespace CoffeeMachine.Web.Controllers
         [Route("BuyCoffee")]
         public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
         {
-            var cashbox = await _banknoteCashboxService.GetCashboxAsync();
             var coffee = await _coffeeService.GetCoffeeDtoByIdAsync(order.CoffeeId);
-            var clientMoney = _coffeeService.GetAmountClientMoney(order.Banknotes);
-            return _coffeeService.BuyCoffee(coffee.CoffeePrice, clientMoney, cashbox, (TypeDeal)order.TypeDeal);
+            if (coffee == null)
+                return null;
+
+            List<BanknoteDto> deal = await _coffeeService.BuyCoffee(coffee, order.Banknotes,(TypeDeal)order.TypeDeal);
+            return deal ?? null;
         }
 
         /// <summary>

@@ -16,5 +16,12 @@ namespace CoffeeMachine.Application.Service.Interfaces
         /// </summary>
         /// <returns><see cref="List{T}"/> where T <see cref="BalanceDto"/></returns>
         Task<List<BalanceDto>> GetBalancesDtoAsync();
+
+        /// <summary>
+        /// update balance in database
+        /// </summary>
+        /// <param name="coffeeId">if of coffee that buying client</param>
+        /// <param name="coffeePrice">price of coffee that buying client</param>
+        Task UpdateBalance(string coffeeId, int coffeePrice);
     }
 }

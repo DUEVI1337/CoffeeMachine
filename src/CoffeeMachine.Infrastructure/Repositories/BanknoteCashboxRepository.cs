@@ -3,9 +3,9 @@
 namespace CoffeeMachine.Infrastructure.Repositories
 {
     /// <summary>
-    /// repository for work with entities <see cref="BanknoteCashBox"/>
+    /// repository for work with entities <see cref="BanknoteCashbox"/>
     /// </summary>
-    public class BanknoteCashboxRepository : BaseRepository<BanknoteCashBox>
+    public class BanknoteCashboxRepository : BaseRepository<BanknoteCashbox>
     {
         public BanknoteCashboxRepository(DataContext db) : base(db)
         {

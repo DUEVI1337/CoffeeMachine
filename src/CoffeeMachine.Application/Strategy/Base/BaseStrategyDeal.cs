@@ -40,7 +40,7 @@ namespace CoffeeMachine.Application.Strategy.Base
         /// <param name="cashbox">cashbox of coffee machine</param>
         /// <param name="amountDeal">amount of deal</param>
         /// <returns><see cref="int"/>, new value of iterator loop</returns>
-        protected static int CheckDeal(int iterator, List<BanknoteCashBox> cashbox, int amountDeal)
+        protected static int CheckDeal(int iterator, List<BanknoteCashbox> cashbox, int amountDeal)
         {
             if ((cashbox[iterator].Denomination > amountDeal || iterator == cashbox.Count - 1)
                 && amountDeal > 0)

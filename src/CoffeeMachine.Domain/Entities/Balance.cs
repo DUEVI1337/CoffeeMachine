@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoffeeMachine.Domain.Entities
 {
@@ -18,6 +19,12 @@ namespace CoffeeMachine.Domain.Entities
         /// type of coffee
         /// </summary>
         [Required]
+        [ForeignKey(nameof(Coffee))]
+        public Guid CoffeeId { get; set; }
+
+        /// <summary>
+        /// Navigation property to 'CoffeeId'
+        /// </summary>
         public Coffee Coffee { get; set; }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace CoffeeMachine.Domain.Entities
         /// id 'Income' table
         /// </summary>
         [Key]
-        public int IncomeId { get; set; }
+        public Guid IncomeId { get; set; }
 
         /// <summary>
         /// Total income coffee machine

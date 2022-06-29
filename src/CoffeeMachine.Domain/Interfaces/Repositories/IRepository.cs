@@ -40,5 +40,11 @@ namespace CoffeeMachine.Domain.Interfaces.Repositories
         /// </summary>
         /// <param name="entity">object that need update</param>
         void Update(TEntity entity);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entities"></param>
+        void UpdateRange(List<TEntity> entities);
     }
 }

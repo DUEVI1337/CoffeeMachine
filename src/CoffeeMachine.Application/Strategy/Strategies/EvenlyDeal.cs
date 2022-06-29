@@ -18,7 +18,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
         /// <param name="cashbox"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public List<BanknoteDto> CalcBanknotesDeal(List<BanknoteCashBox> cashbox, int amountDeal)
+        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal)
         {
             List<BanknoteDto> deal = new();
             cashbox = cashbox.Where(banknote => banknote.Denomination <= amountDeal && banknote.CountBanknote > 0)
@@ -38,7 +38,8 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                     break;
             }
 
-            return amountDeal == 0 ? deal : null;
+            return amountDeal == 0 ? (deal, cashbox) : (null, null);
+
         }
     }
 }

@@ -6,14 +6,19 @@ using CoffeeMachine.Domain.Entities;
 namespace CoffeeMachine.Application.Service.Interfaces
 {
     /// <summary>
-    /// Work with <see cref="BanknoteCashBox"/> entity from 'Infrastructure' layer
+    /// Work with <see cref="BanknoteCashbox"/> entity from 'Infrastructure' layer
     /// </summary>
     public interface IBanknoteCashboxService
     {
         /// <summary>
         /// get money in cashbox of coffee machine 
         /// </summary>
-        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashBox"/></returns>
-        Task<List<BanknoteCashBox>> GetCashboxAsync();
+        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
+        Task<List<BanknoteCashbox>> GetCashboxAsync();
+        /// <summary>
+        /// update cashbox of coffee machine in database
+        /// </summary>
+        /// <param name="updatedCashbox">cashbox with new data</param>
+        Task UpdateCashbox(List<BanknoteCashbox> updatedCashbox);
     }
 }

@@ -24,7 +24,7 @@ namespace CoffeeMachine.Application.Strategy.Contexts
         /// <param name="cashbox">cashbox of coffee machine</param>
         /// <param name="amountDeal">amount money that need give to client</param>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/></returns>
-        public List<BanknoteDto> GiveDeal(List<BanknoteCashBox> cashbox, int amountDeal)
+        public (List<BanknoteDto>, List<BanknoteCashbox>) GiveDeal(List<BanknoteCashbox> cashbox, int amountDeal)
         {
             return _deal.CalcBanknotesDeal(cashbox, amountDeal);
         }

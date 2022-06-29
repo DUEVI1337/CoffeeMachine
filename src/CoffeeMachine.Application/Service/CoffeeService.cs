@@ -22,32 +22,47 @@ namespace CoffeeMachine.Application.Service
     {
         private readonly UnitOfWork _uow;
         private DealContext _dealContext;
+        private readonly IBalanceService _balanceService;
+        private readonly IPaymentService _paymentService;
+        private readonly IBanknoteCashboxService _banknoteCashboxService;
+        private readonly IIncomeService _incomeService;
 
-        public CoffeeService(UnitOfWork uow)
+        public CoffeeService(UnitOfWork uow, IBanknoteCashboxService banknoteCashboxService,
+            IBalanceService balanceService, IPaymentService paymentService, IIncomeService incomeService)
         {
             _uow = uow;
+            _banknoteCashboxService = banknoteCashboxService;
+            _incomeService = incomeService;
+            _paymentService = paymentService;
+            _balanceService = balanceService;
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="coffeePrice"><inheritdoc/></param>
+        /// <param name="coffee"><inheritdoc/></param>
         /// <param name="clientMoney"><inheritdoc/></param>
         /// <param name="typeDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public List<BanknoteDto> BuyCoffee(int coffeePrice, int clientMoney, List<BanknoteCashBox> cashbox,
-            TypeDeal typeDeal)
+        public async Task<List<BanknoteDto>> BuyCoffee(CoffeeDto coffee, List<BanknoteDto> clientMoney, TypeDeal typeDeal)
         {
-            if (clientMoney < coffeePrice)
+            int amountClientMoney = GetAmountClientMoney(clientMoney);
+            var cashbox = await _banknoteCashboxService.GetCashboxAsync();
+            var amountDeal = amountClientMoney - coffee.CoffeePrice;
+
+            if (amountDeal < 0 || !cashbox.Select(x=>x.CountBanknote != 0).Any())
                 return null;
 
             List<BanknoteDto> deal = new();
-            var amountDeal = clientMoney - coffeePrice;
+            List<BanknoteCashbox> updatedCashbox = new();
+
             if (amountDeal == 0)
                 return deal;
 
+            clientMoney.ForEach(x =>
+                cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote += x.CountBanknote);
             _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
-            deal = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
+            (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
             while (deal == null)
             {
                 var newStrategy = DealFactory.GetNextDealStrategy(typeDeal.ToString());
@@ -56,18 +71,24 @@ namespace CoffeeMachine.Application.Service
 
                 typeDeal = Enum.Parse<TypeDeal>(newStrategy.Value.Key);
                 _dealContext = new DealContext(newStrategy.Value.Value);
-                deal = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
+                (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
             }
+
+            await _banknoteCashboxService.UpdateCashbox(updatedCashbox);
+            await _paymentService.AddPayment(amountClientMoney, coffee.CoffeeId, amountDeal);
+            await _incomeService.AddIncome(coffee.CoffeePrice);
+            await _balanceService.UpdateBalance(coffee.CoffeeId, coffee.CoffeePrice);
+            await _uow.SaveChangesAsync();
 
             return deal;
         }
 
         /// <summary>
-        /// <inheritdoc/>
+        /// Calculating amount money that client was injected into the coffee machine
         /// </summary>
-        /// <param name="banknotes"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
-        public int GetAmountClientMoney(List<BanknoteDto> banknotes)
+        /// <param name="banknotes">banknote of client</param>
+        /// <returns><see cref="int"/>, amount money of client</returns>
+        private int GetAmountClientMoney(List<BanknoteDto> banknotes)
         {
             var clientMoney = 0; //money person input in coffee machine
             foreach (var banknote in banknotes)
@@ -107,11 +128,12 @@ namespace CoffeeMachine.Application.Service
         /// Copying <see cref="List{T}"/> to new <see cref="List{T}"/> for keep to original list
         /// </summary>
         /// <param name="cashbox">cashbox of coffee machine</param>
-        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashBox"/></returns>
-        private List<BanknoteCashBox> GetCopyCashbox(List<BanknoteCashBox> cashbox)
+        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
+        private static List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox)
         {
-            var copyCashbox = cashbox.Select(banknote => new BanknoteCashBox
+            var copyCashbox = cashbox.Select(banknote => new BanknoteCashbox
             {
+                BanknoteId = banknote.BanknoteId,
                 CountBanknote = banknote.CountBanknote,
                 Denomination = banknote.Denomination
             }).ToList();

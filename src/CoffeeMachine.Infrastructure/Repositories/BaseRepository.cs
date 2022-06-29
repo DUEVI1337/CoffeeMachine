@@ -66,5 +66,10 @@ namespace CoffeeMachine.Infrastructure.Repositories
         {
             _db.Set<TEntity>().Update(entity);
         }
+
+        public void UpdateRange(List<TEntity> entities)
+        {
+            _db.Set<TEntity>().UpdateRange(entities);
+        }
     }
 }

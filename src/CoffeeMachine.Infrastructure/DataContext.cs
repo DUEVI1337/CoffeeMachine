@@ -18,9 +18,9 @@ namespace CoffeeMachine.Infrastructure
         public DbSet<Balance> Balances { get; set; }
 
         /// <summary>
-        /// <see cref="BanknoteCashBox"/> table in database
+        /// <see cref="BanknoteCashbox"/> table in database
         /// </summary>
-        public DbSet<BanknoteCashBox> BanknoteCashBoxes { get; set; }
+        public DbSet<BanknoteCashbox> BanknoteCashboxes { get; set; }
 
         /// <summary>
         /// <see cref="Coffee"/> table in database
@@ -38,7 +38,7 @@ namespace CoffeeMachine.Infrastructure
         public DbSet<Payment> Payments { get; set; }
 
         /// <summary>
-        /// init <see cref="Coffee"/>, <see cref="BanknoteCashBox"/> table in database 
+        /// init <see cref="Coffee"/>, <see cref="BanknoteCashbox"/> table in database 
         /// </summary>
         /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
@@ -46,14 +46,14 @@ namespace CoffeeMachine.Infrastructure
             builder.Entity<Coffee>().HasData(new Coffee { CoffeeId = Guid.NewGuid(), Name = "Капучино", Price = 600 },
                 new Coffee { CoffeeId = Guid.NewGuid(), Name = "Латте", Price = 850 },
                 new Coffee { CoffeeId = Guid.NewGuid(), Name = "Американо", Price = 900 });
-            builder.Entity<BanknoteCashBox>().HasData(
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 50, CountBanknote = 50 },
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 100, CountBanknote = 40 },
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 30 },
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 500, CountBanknote = 20 },
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 1000, CountBanknote = 15 },
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 10 },
-                new BanknoteCashBox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 5 });
+            builder.Entity<BanknoteCashbox>().HasData(
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 50, CountBanknote = 50 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 100, CountBanknote = 40 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 30 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 500, CountBanknote = 20 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 1000, CountBanknote = 15 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 10 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 5 });
         }
     }
 }

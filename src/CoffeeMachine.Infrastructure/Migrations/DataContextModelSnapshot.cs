@@ -25,7 +25,7 @@ namespace CoffeeMachine.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CoffeeId")
+                    b.Property<Guid>("CoffeeId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("EarnedMoney")
@@ -38,7 +38,7 @@ namespace CoffeeMachine.Infrastructure.Migrations
                     b.ToTable("Balances");
                 });
 
-            modelBuilder.Entity("CoffeeMachine.Domain.Entities.BanknoteCashBox", b =>
+            modelBuilder.Entity("CoffeeMachine.Domain.Entities.BanknoteCashbox", b =>
                 {
                     b.Property<Guid>("BanknoteId")
                         .ValueGeneratedOnAdd()
@@ -52,48 +52,48 @@ namespace CoffeeMachine.Infrastructure.Migrations
 
                     b.HasKey("BanknoteId");
 
-                    b.ToTable("BanknoteCashBoxes");
+                    b.ToTable("BanknoteCashboxes");
 
                     b.HasData(
                         new
                         {
-                            BanknoteId = new Guid("cd2d1469-6390-44c2-8efa-d47bceb99b4e"),
+                            BanknoteId = new Guid("df0c6023-58c2-4f9e-8cb6-57d3df7d95ff"),
                             CountBanknote = 50,
                             Denomination = 50
                         },
                         new
                         {
-                            BanknoteId = new Guid("8942c6a5-78be-43fc-ab2c-804ae4ecb24a"),
+                            BanknoteId = new Guid("d0ef9196-b8c1-4650-a5b0-662a41dda7b9"),
                             CountBanknote = 40,
                             Denomination = 100
                         },
                         new
                         {
-                            BanknoteId = new Guid("d46227f4-1deb-4b7f-834c-a2810a716706"),
+                            BanknoteId = new Guid("25d7c364-da5e-473a-a64c-ee19849fba34"),
                             CountBanknote = 30,
                             Denomination = 200
                         },
                         new
                         {
-                            BanknoteId = new Guid("004d57a0-c692-4468-a019-cc78ee70fc0e"),
+                            BanknoteId = new Guid("494c6473-63f0-40c3-9ace-61ea6487b5ec"),
                             CountBanknote = 20,
                             Denomination = 500
                         },
                         new
                         {
-                            BanknoteId = new Guid("f1da1957-a339-4310-92ea-1bd7f0a213e3"),
+                            BanknoteId = new Guid("8040df98-0a0e-493c-aa1a-881ed63d7afd"),
                             CountBanknote = 15,
                             Denomination = 1000
                         },
                         new
                         {
-                            BanknoteId = new Guid("b963b79a-9b1c-499e-9fb8-b8b911dea012"),
+                            BanknoteId = new Guid("e66c9691-7cba-4ee2-8b81-7e843512ea57"),
                             CountBanknote = 10,
                             Denomination = 2000
                         },
                         new
                         {
-                            BanknoteId = new Guid("1f87ede8-8b5e-46d2-b823-08ccda166b60"),
+                            BanknoteId = new Guid("2e0f54d8-bb5d-49d4-929e-53e7de42b7fb"),
                             CountBanknote = 5,
                             Denomination = 5000
                         });
@@ -119,19 +119,19 @@ namespace CoffeeMachine.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            CoffeeId = new Guid("cce8ea4e-56ae-42b8-b653-edbf06f80e09"),
+                            CoffeeId = new Guid("56dc0c27-a56d-4fb9-a899-83d28223fffe"),
                             Name = "Капучино",
                             Price = 600
                         },
                         new
                         {
-                            CoffeeId = new Guid("f8c20893-4dcd-4eae-966a-01939b5f1898"),
+                            CoffeeId = new Guid("0a0151ed-1e06-47ca-956d-8b61e05163eb"),
                             Name = "Латте",
                             Price = 850
                         },
                         new
                         {
-                            CoffeeId = new Guid("ef46484b-ffe3-4972-a597-5b3fe7d6399e"),
+                            CoffeeId = new Guid("78f439f3-0804-48f4-96cf-f22c67b2a943"),
                             Name = "Американо",
                             Price = 900
                         });
@@ -139,10 +139,9 @@ namespace CoffeeMachine.Infrastructure.Migrations
 
             modelBuilder.Entity("CoffeeMachine.Domain.Entities.Income", b =>
                 {
-                    b.Property<int>("IncomeId")
+                    b.Property<Guid>("IncomeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp without time zone");
@@ -161,13 +160,13 @@ namespace CoffeeMachine.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CashDepositAmount")
+                    b.Property<int>("ClientMoney")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("CoffeeId")
+                    b.Property<Guid>("CoffeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ContributedMoney")
+                    b.Property<int>("Deal")
                         .HasColumnType("integer");
 
                     b.HasKey("PaymentId");
@@ -181,7 +180,9 @@ namespace CoffeeMachine.Infrastructure.Migrations
                 {
                     b.HasOne("CoffeeMachine.Domain.Entities.Coffee", "Coffee")
                         .WithMany()
-                        .HasForeignKey("CoffeeId");
+                        .HasForeignKey("CoffeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Coffee");
                 });
@@ -190,7 +191,9 @@ namespace CoffeeMachine.Infrastructure.Migrations
                 {
                     b.HasOne("CoffeeMachine.Domain.Entities.Coffee", "Coffee")
                         .WithMany("Payments")
-                        .HasForeignKey("CoffeeId");
+                        .HasForeignKey("CoffeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Coffee");
                 });

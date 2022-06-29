@@ -6,7 +6,7 @@ namespace CoffeeMachine.Domain.Entities
     /// <summary>
     /// banknote in cashbox coffee machine
     /// </summary>
-    public class BanknoteCashBox : IComparable<BanknoteCashBox>
+    public class BanknoteCashbox : IComparable<BanknoteCashbox>
     {
         /// <summary>
         /// id in table database
@@ -31,7 +31,7 @@ namespace CoffeeMachine.Domain.Entities
         /// </summary>
         /// <param name="banknote"></param>
         /// <returns></returns>
-        public int CompareTo(BanknoteCashBox banknote)
+        public int CompareTo(BanknoteCashbox banknote)
         {
             return Denomination.CompareTo(banknote.Denomination);
         }

@@ -18,7 +18,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
         /// <param name="cashbox"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public List<BanknoteDto> CalcBanknotesDeal(List<BanknoteCashBox> cashbox, int amountDeal)
+        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal)
         {
             List<BanknoteDto> deal = new();
             var numberBanknoteDeal = 0;
@@ -40,7 +40,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 numberBanknoteDeal = 0;
             }
 
-            return amountDeal == 0 ? deal : null;
+            return amountDeal == 0 ? (deal, cashbox) : (null, null);
         }
     }
 }

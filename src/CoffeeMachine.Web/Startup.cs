@@ -65,10 +65,14 @@ namespace CoffeeMachine.Web
             services.AddScoped<CoffeeRepository>()
                 .AddScoped<BalanceRepository>()
                 .AddScoped<BanknoteCashboxRepository>()
+                .AddScoped<PaymentRepository>()
+                .AddScoped<IncomeRepository>()
                 .AddScoped<UnitOfWork>()
                 .AddScoped<ICoffeeService, CoffeeService>()
                 .AddScoped<IBalanceService, BalanceService>()
-                .AddScoped<IBanknoteCashboxService, BanknoteCashboxService>();
+                .AddScoped<IBanknoteCashboxService, BanknoteCashboxService>()
+                .AddScoped<IIncomeService, IncomeService>()
+                .AddScoped<IPaymentService, PaymentService>();
         }
     }
 }

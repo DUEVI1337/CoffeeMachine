@@ -14,12 +14,14 @@ namespace CoffeeMachine.Infrastructure
         private readonly DataContext _db;
 
         public UnitOfWork(DataContext db, CoffeeRepository coffeeRepo, BalanceRepository balanceRepo,
-            BanknoteCashboxRepository banknoteCashBoxRepo)
+            BanknoteCashboxRepository banknoteCashboxRepo, PaymentRepository paymentRepo, IncomeRepository incomeRepo)
         {
             _db = db;
             CoffeeRepo = coffeeRepo;
             BalanceRepo = balanceRepo;
-            BanknoteCashboxRepo = banknoteCashBoxRepo;
+            BanknoteCashboxRepo = banknoteCashboxRepo;
+            PaymentRepo = paymentRepo;
+            IncomeRepo = incomeRepo;
         }
 
         /// <summary>
@@ -30,17 +32,25 @@ namespace CoffeeMachine.Infrastructure
         /// <summary>
         /// property for DI (ability use basic methods for work with entity <see cref="Balance"/> in database)
         /// </summary>
-        public IRepository<BanknoteCashBox> BanknoteCashboxRepo { get; set; }
+        public IRepository<BanknoteCashbox> BanknoteCashboxRepo { get; set; }
 
         /// <summary>
         /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
         /// </summary>
         public IRepository<Coffee> CoffeeRepo { get; set; }
+        /// <summary>
+        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// </summary>
+        public IRepository<Payment> PaymentRepo { get; set; }
+        /// <summary>
+        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// </summary>
+        public IRepository<Income> IncomeRepo { get; set; }
 
         /// <summary>
         /// save changes in database after something action with entity in database
         /// </summary>
-        public async Task SaveChanges()
+        public async Task SaveChangesAsync()
         {
             await _db.SaveChangesAsync();
         }
