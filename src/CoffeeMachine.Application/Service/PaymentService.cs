@@ -5,6 +5,8 @@ using CoffeeMachine.Application.Service.Interfaces;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
+using Serilog;
+
 namespace CoffeeMachine.Application.Service
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace CoffeeMachine.Application.Service
         /// <param name="coffeeId"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public async Task AddPayment(int clientMoney, string coffeeId, int amountDeal)
+        public async Task AddPaymentAsync(int clientMoney, string coffeeId, int amountDeal)
         {
             _uow.PaymentRepo.Add(new Payment
             {
@@ -35,6 +37,7 @@ namespace CoffeeMachine.Application.Service
                 CoffeeId = Guid.Parse(coffeeId),
                 Deal = amountDeal
             });
+            Log.Information("Payment added");
         }
     }
 }

@@ -38,14 +38,16 @@ namespace CoffeeMachine.Infrastructure
         /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
         /// </summary>
         public IRepository<Coffee> CoffeeRepo { get; set; }
-        /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
-        /// </summary>
-        public IRepository<Payment> PaymentRepo { get; set; }
+
         /// <summary>
         /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
         /// </summary>
         public IRepository<Income> IncomeRepo { get; set; }
+
+        /// <summary>
+        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// </summary>
+        public IRepository<Payment> PaymentRepo { get; set; }
 
         /// <summary>
         /// save changes in database after something action with entity in database

@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
+
+using Serilog;
 
 namespace CoffeeMachine.Application.Strategy.Strategies
 {
@@ -12,18 +15,24 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class BigDeal : IDeal
     {
+        private Action<List<BanknoteCashbox>> _sortList = (cashbox) =>
+        {
+            cashbox.Sort();
+            cashbox.Reverse();
+        };
+
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="cashbox"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal)
+        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
+            int amountDeal)
         {
             List<BanknoteDto> deal = new();
             var numberBanknoteDeal = 0;
-            cashbox.Sort();
-            cashbox.Reverse();
+            _sortList(cashbox);
             foreach (var banknote in cashbox.Where(banknote =>
                          banknote.Denomination <= amountDeal && banknote.CountBanknote > 0))
             {
@@ -40,7 +49,12 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 numberBanknoteDeal = 0;
             }
 
-            return amountDeal == 0 ? (deal, cashbox) : (null, null);
+            if (amountDeal == 0)
+                return (deal, cashbox);
+
+            Log.Information($"Strategy {this} fail");
+            return (null, null);
+
         }
     }
 }

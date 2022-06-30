@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
+
+using Serilog;
 
 namespace CoffeeMachine.Application.Strategy.Strategies
 {
@@ -12,6 +15,13 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class EvenlyDeal : BaseStrategyDeal, IDeal
     {
+        private Func<List<BanknoteCashbox>, int, List<BanknoteCashbox>> _sortList = (cashbox, deal) =>
+        {
+            cashbox.Sort();
+            cashbox.Reverse();
+            return cashbox.Where(x=>x.Denomination >= deal && x.CountBanknote > 0).ToList();
+        };
+
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
@@ -21,25 +31,21 @@ namespace CoffeeMachine.Application.Strategy.Strategies
         public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal)
         {
             List<BanknoteDto> deal = new();
-            cashbox = cashbox.Where(banknote => banknote.Denomination <= amountDeal && banknote.CountBanknote > 0)
-                .ToList();
-            cashbox.Sort();
-            cashbox.Reverse();
+            cashbox = _sortList(cashbox, amountDeal);
             for (var i = 0; i < cashbox.Count; i++)
             {
                 amountDeal -= cashbox[i].Denomination;
                 cashbox[i].CountBanknote--;
-
-                deal = AddBanknotesInDeal(cashbox[i].Denomination, deal, 1);
-
-                i = CheckDeal(i, cashbox, amountDeal);
-
+                deal = AddBanknoteInDeal(cashbox[i].Denomination, deal, 1);
+                i = CheckDeal(i, cashbox, amountDeal) - 1; //'-1' - next iteration of loop i + 1
                 if (i == -2)
                     break;
             }
+            if (amountDeal == 0)
+                return (deal, cashbox);
 
-            return amountDeal == 0 ? (deal, cashbox) : (null, null);
-
+            Log.Information($"Strategy {this} fail");
+            return (null, null);
         }
     }
 }

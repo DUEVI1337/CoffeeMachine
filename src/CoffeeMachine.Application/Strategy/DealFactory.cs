@@ -3,6 +3,8 @@
 using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Application.Strategy.Strategies;
 
+using Serilog;
+
 namespace CoffeeMachine.Application.Strategy
 {
     /// <summary>
@@ -50,6 +52,7 @@ namespace CoffeeMachine.Application.Strategy
             if (_nameOldStrategies.Contains(nameStrategy))
             {
                 _nameOldStrategies.Clear();
+                Log.Information("All strategies were executed but deal could not be returned");
                 return null;
             }
 

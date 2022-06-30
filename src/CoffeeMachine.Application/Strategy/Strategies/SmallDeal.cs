@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
+
+using Serilog;
 
 namespace CoffeeMachine.Application.Strategy.Strategies
 {
@@ -12,6 +15,12 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class SmallDeal : BaseStrategyDeal, IDeal
     {
+        private Func<List<BanknoteCashbox>, int, List<BanknoteCashbox>> _sortList = (cashbox, deal) =>
+        {
+            cashbox.Sort();
+            return cashbox.Where(x => x.Denomination >= deal && x.CountBanknote > 0).ToList();
+        };
+
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
@@ -21,15 +30,14 @@ namespace CoffeeMachine.Application.Strategy.Strategies
         public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal)
         {
             List<BanknoteDto> deal = new();
-            var numberBanknoteDeal = 0;
-            cashbox = cashbox.Where(banknote => banknote.Denomination <= amountDeal && banknote.CountBanknote > 0)
-                .ToList();
-            cashbox.Sort();
+            cashbox = _sortList(cashbox, amountDeal);
+            int numberBanknoteDeal = 0;
             for (var i = 0; i < cashbox.Count; i++)
             {
-                var allowableNumberBanknote = amountDeal != cashbox[i].Denomination
+                var allowableNumberBanknote = amountDeal != cashbox[i].Denomination //allowable number of banknotes to deal from cashbox of coffee machine (20% or one banknote)
                     ? 20 * ((float)cashbox[i].CountBanknote / 100)
                     : 1;
+                
                 while (cashbox[i].Denomination <= amountDeal &&
                        numberBanknoteDeal <= allowableNumberBanknote &&
                        cashbox[i].CountBanknote > 0)
@@ -38,19 +46,19 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                     cashbox[i].CountBanknote--;
                     numberBanknoteDeal++;
                 }
-
                 if (numberBanknoteDeal != 0)
-                    deal = AddBanknotesInDeal(cashbox[i].Denomination, deal, numberBanknoteDeal);
-
+                    deal = AddBanknoteInDeal(cashbox[i].Denomination, deal, numberBanknoteDeal);
                 numberBanknoteDeal = 0;
-
-                i = CheckDeal(i, cashbox, amountDeal);
-
+                i = CheckDeal(i, cashbox, amountDeal) - 1; //next iteration of loop - i++
                 if (i == -2)
                     break;
             }
 
-            return amountDeal == 0 ? (deal, cashbox) : (null, null);
+            if (amountDeal == 0)
+                return (deal, cashbox);
+
+            Log.Information($"Strategy {this} fail");
+            return (null, null);
         }
     }
 }
