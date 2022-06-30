@@ -22,6 +22,6 @@ namespace CoffeeMachine.Application.Service.Interfaces
         /// </summary>
         /// <param name="coffeeId">if of coffee that buying client</param>
         /// <param name="coffeePrice">price of coffee that buying client</param>
-        Task UpdateBalance(string coffeeId, int coffeePrice);
+        Task UpdateBalanceAsync(string coffeeId, int coffeePrice);
     }
 }

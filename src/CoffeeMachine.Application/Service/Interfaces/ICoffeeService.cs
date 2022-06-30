@@ -18,7 +18,7 @@ namespace CoffeeMachine.Application.Service.Interfaces
         /// <param name="clientMoney">money that client was injected into the coffee machine</param>
         /// <param name="typeDeal">type of deal that client chose</param>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/></returns>
-        Task<List<BanknoteDto>> BuyCoffee(CoffeeDto coffee, List<BanknoteDto> clientMoney, TypeDeal typeDeal);
+        Task<List<BanknoteDto>> BuyCoffeeAsync(CoffeeDto coffee, List<BanknoteDto> clientMoney, TypeDeal typeDeal);
 
         /// <summary>
         /// get <see cref="Coffee"/> by him id from database that converts to <see cref="CoffeeDto"/>

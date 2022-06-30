@@ -15,10 +15,11 @@ namespace CoffeeMachine.Application.Service.Interfaces
         /// </summary>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
         Task<List<BanknoteCashbox>> GetCashboxAsync();
+
         /// <summary>
         /// update cashbox of coffee machine in database
         /// </summary>
         /// <param name="updatedCashbox">cashbox with new data</param>
-        Task UpdateCashbox(List<BanknoteCashbox> updatedCashbox);
+        Task UpdateCashboxAsync(List<BanknoteCashbox> updatedCashbox);
     }
 }

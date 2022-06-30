@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CoffeeMachine.Domain\CoffeeMachine.Domain.csproj" />
     <ProjectReference Include="..\CoffeeMachine.Infrastructure\CoffeeMachine.Infrastructure.csproj" />
   </ItemGroup>

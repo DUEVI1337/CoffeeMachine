@@ -6,6 +6,8 @@ using CoffeeMachine.Application.Service.Interfaces;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
+using Serilog;
+
 namespace CoffeeMachine.Application.Service
 {
     /// <summary>
@@ -34,18 +36,17 @@ namespace CoffeeMachine.Application.Service
         /// </summary>
         /// <param name="updatedCashbox"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public async Task UpdateCashbox(List<BanknoteCashbox> updatedCashbox)
+        public async Task UpdateCashboxAsync(List<BanknoteCashbox> updatedCashbox)
         {
             var cashbox = await _uow.BanknoteCashboxRepo.GetAllAsync();
             foreach (var banknote in updatedCashbox)
             {
-                if (cashbox.Select(x => x.BanknoteId).Contains(banknote.BanknoteId))
-                {
-                    cashbox.FirstOrDefault(x => x.BanknoteId == banknote.BanknoteId).CountBanknote =
+                cashbox.FirstOrDefault(x => x.BanknoteId == banknote.BanknoteId).CountBanknote =
                         banknote.CountBanknote;
-                }
             }
+
             _uow.BanknoteCashboxRepo.UpdateRange(cashbox);
+            Log.Information("Cashbox of coffee machine updated");
         }
     }
 }

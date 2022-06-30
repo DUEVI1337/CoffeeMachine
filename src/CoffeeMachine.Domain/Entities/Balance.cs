@@ -16,16 +16,16 @@ namespace CoffeeMachine.Domain.Entities
         public Guid BalanceId { get; set; }
 
         /// <summary>
+        /// Navigation property to 'CoffeeId'
+        /// </summary>
+        public Coffee Coffee { get; set; }
+
+        /// <summary>
         /// type of coffee
         /// </summary>
         [Required]
         [ForeignKey(nameof(Coffee))]
         public Guid CoffeeId { get; set; }
-
-        /// <summary>
-        /// Navigation property to 'CoffeeId'
-        /// </summary>
-        public Coffee Coffee { get; set; }
 
         /// <summary>
         /// earned money with coffee

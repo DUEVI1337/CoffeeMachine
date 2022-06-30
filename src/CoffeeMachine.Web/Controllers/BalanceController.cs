@@ -24,12 +24,13 @@ namespace CoffeeMachine.Web.Controllers
         /// <summary>
         /// Get earnings
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="List{T}"/> where T <see cref="BalanceDto"/></returns>
+        /// <response code="200">return balance from database</response>
         [HttpGet]
         [Route("Balance")]
-        public async Task<List<BalanceDto>> GetListBalanceDto()
+        public async Task<ActionResult<List<BalanceDto>>> GetListBalanceDto()
         {
-            return await _balanceService.GetBalancesDtoAsync();
+            return Ok(await _balanceService.GetBalancesDtoAsync());
         }
     }
 }

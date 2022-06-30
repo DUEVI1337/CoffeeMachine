@@ -1,5 +1,4 @@
 ﻿using CoffeeMachine.Domain.Dto;
-using CoffeeMachine.Domain.DTO;
 using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Mappers
@@ -20,13 +19,13 @@ namespace CoffeeMachine.Application.Mappers
         {
             return new()
             {
-                BalanceId = balance.BalanceId, EarnedMoney = balance.EarnedMoney, CoffeeId = balance.Coffee.CoffeeId
+                BalanceId = balance.BalanceId, EarnedMoney = balance.EarnedMoney, CoffeeId = balance.CoffeeId
             };
         }
 
         #endregion
 
-        #region MappersCoffe
+        #region MappersCoffee
 
         /// <summary>
         /// Convert <see cref="Coffee"/> to <see cref="CoffeeDto"/>
@@ -40,5 +39,6 @@ namespace CoffeeMachine.Application.Mappers
         }
 
         #endregion
+
     }
 }

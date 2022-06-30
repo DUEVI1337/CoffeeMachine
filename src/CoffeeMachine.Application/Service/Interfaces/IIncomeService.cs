@@ -13,6 +13,6 @@ namespace CoffeeMachine.Application.Service.Interfaces
         /// create and add 'Payment' in database
         /// </summary>
         /// <param name="coffeePrice">price of coffee that buying client</param>
-        Task AddIncome(int coffeePrice);
+        Task AddIncomeAsync(int coffeePrice);
     }
 }

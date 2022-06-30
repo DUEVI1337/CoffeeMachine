@@ -10,11 +10,10 @@ namespace CoffeeMachine.Domain.Entities
     public class Payment
     {
         /// <summary>
-        /// type of coffee
+        /// money that person contributed in coffee machine
         /// </summary>
         [Required]
-        [ForeignKey(nameof(Coffee))]
-        public Guid CoffeeId { get; set; }
+        public int ClientMoney { get; set; }
 
         /// <summary>
         /// Navigation property to 'CoffeeId'
@@ -22,10 +21,11 @@ namespace CoffeeMachine.Domain.Entities
         public Coffee Coffee { get; set; }
 
         /// <summary>
-        /// money that person contributed in coffee machine
+        /// type of coffee
         /// </summary>
         [Required]
-        public int ClientMoney { get; set; }
+        [ForeignKey(nameof(Coffee))]
+        public Guid CoffeeId { get; set; }
 
         /// <summary>
         /// money that coffee machine returned person 

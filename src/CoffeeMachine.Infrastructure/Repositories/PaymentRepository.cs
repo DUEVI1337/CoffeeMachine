@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CoffeeMachine.Domain.Entities;
-using CoffeeMachine.Domain.Interfaces.Repositories;
+﻿using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Infrastructure.Repositories
 {

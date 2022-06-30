@@ -9,6 +9,8 @@ using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
+using Serilog;
+
 namespace CoffeeMachine.Application.Service
 {
     /// <summary>
@@ -39,10 +41,10 @@ namespace CoffeeMachine.Application.Service
         /// <param name="coffeeId"><inheritdoc/></param>
         /// <param name="coffeePrice"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public async Task UpdateBalance(string coffeeId, int coffeePrice)
+        public async Task UpdateBalanceAsync(string coffeeId, int coffeePrice)
         {
             var balances = await _uow.BalanceRepo.GetAllAsync();
-            var balanceCoffee = balances.FirstOrDefault(x => x.Coffee.CoffeeId == Guid.Parse(coffeeId));
+            var balanceCoffee = balances.FirstOrDefault(x => x.CoffeeId == Guid.Parse(coffeeId));
             if (balanceCoffee == null)
             {
                 _uow.BalanceRepo.Add(new Balance
@@ -51,11 +53,13 @@ namespace CoffeeMachine.Application.Service
                     EarnedMoney = coffeePrice,
                     CoffeeId = Guid.Parse(coffeeId)
                 });
+                Log.Information("New balance add in database");
             }
             else
             {
                 balanceCoffee.EarnedMoney += coffeePrice;
                 _uow.BalanceRepo.Update(balanceCoffee);
+                Log.Information("Balance in database update");
             }
         }
     }

@@ -8,24 +8,26 @@ using CoffeeMachine.Application.Service.Interfaces;
 using CoffeeMachine.Application.Strategy;
 using CoffeeMachine.Application.Strategy.Contexts;
 using CoffeeMachine.Domain.Dto;
-using CoffeeMachine.Domain.DTO;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
+using Serilog;
+
 namespace CoffeeMachine.Application.Service
 {
+
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
     public class CoffeeService : ICoffeeService
 
     {
-        private readonly UnitOfWork _uow;
-        private DealContext _dealContext;
         private readonly IBalanceService _balanceService;
-        private readonly IPaymentService _paymentService;
         private readonly IBanknoteCashboxService _banknoteCashboxService;
         private readonly IIncomeService _incomeService;
+        private readonly IPaymentService _paymentService;
+        private readonly UnitOfWork _uow;
+        private DealContext _dealContext;
 
         public CoffeeService(UnitOfWork uow, IBanknoteCashboxService banknoteCashboxService,
             IBalanceService balanceService, IPaymentService paymentService, IIncomeService incomeService)
@@ -44,14 +46,18 @@ namespace CoffeeMachine.Application.Service
         /// <param name="clientMoney"><inheritdoc/></param>
         /// <param name="typeDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public async Task<List<BanknoteDto>> BuyCoffee(CoffeeDto coffee, List<BanknoteDto> clientMoney, TypeDeal typeDeal)
+        public async Task<List<BanknoteDto>> BuyCoffeeAsync(CoffeeDto coffee, List<BanknoteDto> clientMoney,
+            TypeDeal typeDeal)
         {
-            int amountClientMoney = GetAmountClientMoney(clientMoney);
+            var amountClientMoney = GetAmountClientMoney(clientMoney);
             var cashbox = await _banknoteCashboxService.GetCashboxAsync();
             var amountDeal = amountClientMoney - coffee.CoffeePrice;
 
-            if (amountDeal < 0 || !cashbox.Select(x=>x.CountBanknote != 0).Any())
+            if (amountDeal < 0 || !cashbox.Select(x => x.CountBanknote != 0).Any())
+            {
+                Log.Information("insufficient funds in cashbox of coffee machine or money of client less than price of coffee");
                 return null;
+            }
 
             List<BanknoteDto> deal = new();
             List<BanknoteCashbox> updatedCashbox = new();
@@ -74,13 +80,42 @@ namespace CoffeeMachine.Application.Service
                 (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
             }
 
-            await _banknoteCashboxService.UpdateCashbox(updatedCashbox);
-            await _paymentService.AddPayment(amountClientMoney, coffee.CoffeeId, amountDeal);
-            await _incomeService.AddIncome(coffee.CoffeePrice);
-            await _balanceService.UpdateBalance(coffee.CoffeeId, coffee.CoffeePrice);
+            //как сделать нормально
+            await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
+            await _paymentService.AddPaymentAsync(amountClientMoney, coffee.CoffeeId, amountDeal);
+            await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
+            await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
             await _uow.SaveChangesAsync();
+            Log.Information("New data was updated in database");
 
             return deal;
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="id">id coffee</param>
+        /// <returns><inheritdoc/></returns>
+        public async Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id)
+        {
+            if (!Guid.TryParse(id, out var idGuid))
+            {
+                Log.Information("Invalid id of coffee");
+                return null;
+            }
+
+            var coffee = await _uow.CoffeeRepo.GetByIdAsync(idGuid);
+            return coffee == null ? null : Mapper.MapToCoffeeDto(coffee);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <returns><inheritdoc/></returns>
+        public async Task<List<CoffeeDto>> GetListCoffeeDtoAsync()
+        {
+            var coffees = await _uow.CoffeeRepo.GetAllAsync();
+            return coffees.Select(x => Mapper.MapToCoffeeDto(x)).ToList();
         }
 
         /// <summary>
@@ -98,30 +133,6 @@ namespace CoffeeMachine.Application.Service
             }
 
             return clientMoney;
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="id">id coffee</param>
-        /// <returns><inheritdoc/></returns>
-        public async Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id)
-        {
-            if (!Guid.TryParse(id, out var idGuid))
-                return null;
-
-            var coffee = await _uow.CoffeeRepo.GetByIdAsync(idGuid);
-            return coffee == null ? null : Mapper.MapToCoffeeDto(coffee);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <returns><inheritdoc/></returns>
-        public async Task<List<CoffeeDto>> GetListCoffeeDtoAsync()
-        {
-            var coffees = await _uow.CoffeeRepo.GetAllAsync();
-            return coffees.Select(x => Mapper.MapToCoffeeDto(x)).ToList();
         }
 
         /// <summary>
