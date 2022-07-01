@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Mappers;
-using CoffeeMachine.Application.Service;
+using CoffeeMachine.Application.Services;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace CoffeeMachine.UnitTests.ServicesTests
 {
-    public class CoffeeServiceTest
+    public class CoffeeServiceTesst
     {
         private CoffeeService _coffeeService;
         private DataContext _db;

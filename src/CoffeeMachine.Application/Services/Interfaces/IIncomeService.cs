@@ -2,7 +2,7 @@
 
 using CoffeeMachine.Domain.Entities;
 
-namespace CoffeeMachine.Application.Service.Interfaces
+namespace CoffeeMachine.Application.Services.Interfaces
 {
     /// <summary>
     /// Work with <see cref="Income"/> entity from 'Infrastructure' layer

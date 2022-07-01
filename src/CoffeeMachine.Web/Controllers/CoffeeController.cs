@@ -7,7 +7,6 @@ using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 

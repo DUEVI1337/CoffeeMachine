@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using CoffeeMachine.Application.Service.Interfaces;
+using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
 using Serilog;
 
-namespace CoffeeMachine.Application.Service
+namespace CoffeeMachine.Application.Services
 {
     /// <summary>
     /// <inheritdoc/>
@@ -28,7 +28,7 @@ namespace CoffeeMachine.Application.Service
         /// <param name="coffeeId"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public async Task AddPaymentAsync(int clientMoney, string coffeeId, int amountDeal)
+        public void AddPaymentAsync(int clientMoney, string coffeeId, int amountDeal)
         {
             _uow.PaymentRepo.Add(new Payment
             {

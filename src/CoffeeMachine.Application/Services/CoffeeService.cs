@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Mappers;
-using CoffeeMachine.Application.Service.Interfaces;
+using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Application.Strategy;
 using CoffeeMachine.Application.Strategy.Contexts;
 using CoffeeMachine.Domain.Dto;
@@ -13,7 +13,7 @@ using CoffeeMachine.Infrastructure;
 
 using Serilog;
 
-namespace CoffeeMachine.Application.Service
+namespace CoffeeMachine.Application.Services
 {
 
     /// <summary>
@@ -82,7 +82,7 @@ namespace CoffeeMachine.Application.Service
 
             //как сделать нормально
             await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
-            await _paymentService.AddPaymentAsync(amountClientMoney, coffee.CoffeeId, amountDeal);
+            _paymentService.AddPaymentAsync(amountClientMoney, coffee.CoffeeId, amountDeal);
             await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
             await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
             await _uow.SaveChangesAsync();
@@ -123,7 +123,7 @@ namespace CoffeeMachine.Application.Service
         /// </summary>
         /// <param name="banknotes">banknote of client</param>
         /// <returns><see cref="int"/>, amount money of client</returns>
-        private int GetAmountClientMoney(List<BanknoteDto> banknotes)
+        private static int GetAmountClientMoney(List<BanknoteDto> banknotes)
         {
             var clientMoney = 0; //money person input in coffee machine
             foreach (var banknote in banknotes)

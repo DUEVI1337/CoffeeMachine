@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Mappers;
-using CoffeeMachine.Application.Service.Interfaces;
+using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
 using Serilog;
 
-namespace CoffeeMachine.Application.Service
+namespace CoffeeMachine.Application.Services
 {
     /// <summary>
     /// <inheritdoc/>
