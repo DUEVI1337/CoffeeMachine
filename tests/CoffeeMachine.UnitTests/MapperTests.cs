@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace CoffeeMachine.IntegrationTests
 {
     [TestFixture]
-    public class MapperTest
+    public class MapperTests
     {
 
         [SetUp]

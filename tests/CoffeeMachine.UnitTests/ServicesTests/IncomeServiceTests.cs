@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-using CoffeeMachine.Application.Service;
+using CoffeeMachine.Application.Services;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 namespace CoffeeMachine.UnitTests.ServicesTests
 {
-    public class IncomeServiceTest
+    public class IncomeServiceTests
     {
         private IncomeService _incomeService;
         private DataContext _db;
@@ -49,7 +49,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             //Assert
             int numberIncomeActual = _db.Incomes.ToList().Count;
             await _db.DisposeAsync();
-            Assert.AreEqual(numberIncomeExpected, numberIncomeActual);
+            Assert.That(numberIncomeActual, Is.EqualTo(numberIncomeExpected));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             //Assert
             int totslIncomeActual = _db.Incomes.FirstOrDefault(x => x.Date.Day == DateTime.UtcNow.Day).TotalIncome;
             await _db.DisposeAsync();
-            Assert.AreEqual(totalIncomeExpected, totslIncomeActual);
+            Assert.That(totslIncomeActual, Is.EqualTo(totalIncomeExpected));
         }
     }
 }

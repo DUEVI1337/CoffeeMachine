@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using CoffeeMachine.Domain.Entities;
 
-namespace CoffeeMachine.Application.Service.Interfaces
+namespace CoffeeMachine.Application.Services.Interfaces
 {
     /// <summary>
     /// Work with <see cref="BanknoteCashbox"/> entity from 'Infrastructure' layer

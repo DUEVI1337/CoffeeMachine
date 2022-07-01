@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 
-namespace CoffeeMachine.Application.Service.Interfaces
+namespace CoffeeMachine.Application.Services.Interfaces
 {
     /// <summary>
     /// Work with <see cref="Coffee"/> entity from 'Infrastructure' layer. For CoffeeController.

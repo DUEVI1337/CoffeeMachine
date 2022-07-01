@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 namespace CoffeeMachine.UnitTests.ServicesTests
 {
-    public class PaymentServiceTest
+    public class PaymentServiceTests
     {
         private PaymentService _paymentService;
         private DataContext _db;
