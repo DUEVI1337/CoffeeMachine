@@ -80,9 +80,8 @@ namespace CoffeeMachine.Application.Services
                 (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
             }
 
-            //как сделать нормально
             await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
-            _paymentService.AddPaymentAsync(amountClientMoney, coffee.CoffeeId, amountDeal);
+            _paymentService.AddPayment(amountClientMoney, coffee.CoffeeId, amountDeal);
             await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
             await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
             await _uow.SaveChangesAsync();
@@ -142,13 +141,12 @@ namespace CoffeeMachine.Application.Services
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
         private static List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox)
         {
-            var copyCashbox = cashbox.Select(banknote => new BanknoteCashbox
+            return cashbox.Select(banknote => new BanknoteCashbox
             {
                 BanknoteId = banknote.BanknoteId,
                 CountBanknote = banknote.CountBanknote,
                 Denomination = banknote.Denomination
             }).ToList();
-            return copyCashbox;
         }
     }
 }

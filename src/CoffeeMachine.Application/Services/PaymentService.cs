@@ -28,7 +28,7 @@ namespace CoffeeMachine.Application.Services
         /// <param name="coffeeId"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public void AddPaymentAsync(int clientMoney, string coffeeId, int amountDeal)
+        public void AddPayment(int clientMoney, string coffeeId, int amountDeal)
         {
             _uow.PaymentRepo.Add(new Payment
             {

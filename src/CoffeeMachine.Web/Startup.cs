@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Reflection;
 
-using CoffeeMachine.Application.Service;
-using CoffeeMachine.Application.Service.Interfaces;
+using CoffeeMachine.Application.Services;
+using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
 
@@ -29,9 +29,10 @@ namespace CoffeeMachine.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<GlobalExceptionHandler>();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseMiddleware<GlobalExceptionHandler>();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoffeeMachine v1"));
             }
@@ -62,7 +63,8 @@ namespace CoffeeMachine.Web
             {
                 opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
             });
-            services.AddScoped<CoffeeRepository>()
+            services.AddTransient<GlobalExceptionHandler>()
+                .AddScoped<CoffeeRepository>()
                 .AddScoped<BalanceRepository>()
                 .AddScoped<BanknoteCashboxRepository>()
                 .AddScoped<PaymentRepository>()

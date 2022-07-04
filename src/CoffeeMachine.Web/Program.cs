@@ -26,8 +26,8 @@ namespace CoffeeMachine.Web
                 .CreateLogger();
             try
             {
-                Log.Information("Start");
                 CreateHostBuilder(args).Build().Run();
+                Log.Information("Start");
                 return 0;
             }
             catch (Exception ex)
