@@ -1,6 +1,7 @@
 using System;
 
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -14,6 +15,13 @@ namespace CoffeeMachine.Web
         {
             return Host.CreateDefaultBuilder(args)
                 .UseSerilog()
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    var env = hostingContext.HostingEnvironment;
+
+                    config.AddJsonFile("appsettings.json", true, true)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+                })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
 
@@ -26,8 +34,8 @@ namespace CoffeeMachine.Web
                 .CreateLogger();
             try
             {
-                Log.Information("Start");
                 CreateHostBuilder(args).Build().Run();
+                Log.Information("Start");
                 return 0;
             }
             catch (Exception ex)

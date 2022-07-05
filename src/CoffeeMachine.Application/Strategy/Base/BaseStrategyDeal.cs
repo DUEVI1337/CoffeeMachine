@@ -24,15 +24,11 @@ namespace CoffeeMachine.Application.Strategy.Base
             int numberBanknote)
         {
             if (!dealBanknotes.Select(x => x.Denomination).Contains(banknoteDenomination))
-            {
                 dealBanknotes.Add(new BanknoteDto
                     { Denomination = banknoteDenomination, CountBanknote = numberBanknote });
-            }
             else
-            {
                 dealBanknotes.FirstOrDefault(x => x.Denomination == banknoteDenomination)!.CountBanknote +=
                     numberBanknote;
-            }
 
             return dealBanknotes;
         }
@@ -47,10 +43,8 @@ namespace CoffeeMachine.Application.Strategy.Base
         protected static int CheckDeal(int index, List<BanknoteCashbox> cashbox, int amountDeal)
         {
             if ((cashbox[index].Denomination > amountDeal || index == cashbox.Count - 1) && amountDeal > 0)
-            {
                 return cashbox.IndexOf(cashbox.FirstOrDefault(x =>
                     x.Denomination <= amountDeal && x.CountBanknote != 0));
-            }
 
             return amountDeal == 0 ? BreakIndexLoop : index;
         }

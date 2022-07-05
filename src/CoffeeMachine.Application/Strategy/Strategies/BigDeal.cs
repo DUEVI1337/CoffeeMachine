@@ -15,7 +15,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class BigDeal : IDeal
     {
-        private Action<List<BanknoteCashbox>> _sortList = (cashbox) =>
+        private readonly Action<List<BanknoteCashbox>> _sortList = cashbox =>
         {
             cashbox.Sort();
             cashbox.Reverse();
@@ -54,7 +54,6 @@ namespace CoffeeMachine.Application.Strategy.Strategies
 
             Log.Information($"Strategy {this} fail");
             return (null, null);
-
         }
     }
 }

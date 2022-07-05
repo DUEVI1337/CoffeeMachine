@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-using CoffeeMachine.Application.Service;
+using CoffeeMachine.Application.Services;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
@@ -49,7 +49,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
             
             //Act
-            await _paymentService.AddPaymentAsync(clientMoney, paymentExpected.CoffeeId.ToString(), deal);
+            _paymentService.AddPayment(clientMoney, paymentExpected.CoffeeId.ToString(), deal);
 
             //Assert
             var paymentActual = await _db.Payments.FindAsync(paymentExpected.PaymentId);

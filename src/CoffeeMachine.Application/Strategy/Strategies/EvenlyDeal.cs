@@ -15,11 +15,11 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class EvenlyDeal : BaseStrategyDeal, IDeal
     {
-        private Func<List<BanknoteCashbox>, int, List<BanknoteCashbox>> _sortList = (cashbox, deal) =>
+        private readonly Func<List<BanknoteCashbox>, int, List<BanknoteCashbox>> _sortList = (cashbox, deal) =>
         {
             cashbox.Sort();
             cashbox.Reverse();
-            return cashbox.Where(x=>x.Denomination >= deal && x.CountBanknote > 0).ToList();
+            return cashbox.Where(x => x.Denomination >= deal && x.CountBanknote > 0).ToList();
         };
 
         /// <summary>
@@ -28,7 +28,8 @@ namespace CoffeeMachine.Application.Strategy.Strategies
         /// <param name="cashbox"><inheritdoc/></param>
         /// <param name="amountDeal"><inheritdoc/></param>
         /// <returns><inheritdoc/></returns>
-        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal)
+        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
+            int amountDeal)
         {
             List<BanknoteDto> deal = new();
             cashbox = _sortList(cashbox, amountDeal);
@@ -41,6 +42,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 if (i == -2)
                     break;
             }
+
             if (amountDeal == 0)
                 return (deal, cashbox);
 
