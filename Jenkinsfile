@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'master' }
+  agent { label 'мастер' }
   options {
     timestamps()
     timeout(time: 1, unit: 'HOURS')
