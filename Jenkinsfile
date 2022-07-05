@@ -23,6 +23,22 @@ pipeline {
           DOTNET_CLI_TELEMETRY_OPTOUT = 'true'
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 'true'
       }
+	  steps {
+        withSonarQubeEnv('sonar.tomskasu.ru') {
+          sh(script: 'dotnet sonarscanner begin /k:$PROJECT_NAME /version:$BUILD_NUMBER',
+            label: 'begin SonarQube scan')
+          sh(script: 'dotnet restore CoffeeMachine.sln',
+            label: 'Restore')
+          sh(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
+            label: 'build app')
+          sh(script: 'dotnet sonarscanner end',
+            label: 'end SoanrQube scan')
+        }
+        sh(script: 'dotnet publish CoffeeMachine.sln--configuration Release --output app',
+            label: 'publish app')
+         sh(script: 'chmod -R 777 app/',
+          label: 'changed rules on app directory')
+      }
     }
  
     stage('Docker image create and push') {

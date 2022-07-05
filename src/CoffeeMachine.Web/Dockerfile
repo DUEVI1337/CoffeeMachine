@@ -2,7 +2,7 @@ FROM alpine
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS base
 WORKDIR /app
-EXPOSE 443
+EXPOSE 8099
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
 WORKDIR /src
