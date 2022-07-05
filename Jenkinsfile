@@ -6,34 +6,22 @@ pipeline {
   }
   environment {
     PROJECT_NAME = 'CoffeeMachine_Duvanov'
-    NAME = 'registry.tomskasu.ru/trainee/back-intern/coffeemachine_duvanov/-/tree/HRI-14'
+    NAME = 'registry.tomskasu.ru/trainee/back-intern/coffeemachine_duvanov'
     TAG = 'latest'
   }
   stages {
     stage('Build') {
-      agent {
-        docker {
-          image 'registry.tomskasu.ru/trainee/back-intern/coffeemachine_duvanov'
-		  reuseNode true
-          label 'build-image'
-        }
-      }
+      agent { dockerfile true }
       environment {
           ASPNETCORE_ENVIRONMENT = 'Production'
           DOTNET_CLI_TELEMETRY_OPTOUT = 'true'
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 'true'
       }
 	  steps {
-        withSonarQubeEnv('sonar.tomskasu.ru') {
-          sh(script: 'dotnet sonarscanner begin /k:$PROJECT_NAME /version:$BUILD_NUMBER',
-            label: 'begin SonarQube scan')
-          sh(script: 'dotnet restore CoffeeMachine.sln',
+        sh(script: 'dotnet restore CoffeeMachine.sln',
             label: 'Restore')
-          sh(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
+        sh(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
             label: 'build app')
-          sh(script: 'dotnet sonarscanner end',
-            label: 'end SoanrQube scan')
-        }
         sh(script: 'dotnet publish CoffeeMachine.sln--configuration Release --output app',
             label: 'publish app')
          sh(script: 'chmod -R 777 app/',
@@ -43,7 +31,7 @@ pipeline {
  
     stage('Docker image create and push') {
       when {
-        branch 'main'
+        branch 'HRI-14'
       }
       steps {
         script {
