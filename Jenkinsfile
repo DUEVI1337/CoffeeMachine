@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'MAVEN_OPTS' }
+  agent { label 'duevi' }
   options {
     timestamps()
     timeout(time: 1, unit: 'HOURS')
