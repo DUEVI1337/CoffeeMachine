@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'tap-agents' }
+  agent { label 'master' }
   options {
     timestamps()
     timeout(time: 1, unit: 'HOURS')
