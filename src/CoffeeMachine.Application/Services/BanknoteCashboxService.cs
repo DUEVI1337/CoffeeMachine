@@ -42,7 +42,7 @@ namespace CoffeeMachine.Application.Services
             foreach (var banknote in updatedCashbox)
             {
                 cashbox.FirstOrDefault(x => x.BanknoteId == banknote.BanknoteId).CountBanknote =
-                        banknote.CountBanknote;
+                    banknote.CountBanknote;
             }
 
             _uow.BanknoteCashboxRepo.UpdateRange(cashbox);

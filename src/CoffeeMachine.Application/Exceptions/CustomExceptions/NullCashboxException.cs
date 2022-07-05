@@ -7,8 +7,6 @@ namespace CoffeeMachine.Application.Exceptions.CustomExceptions
 {
     public class NullCashboxException : Exception
     {
-        public List<BanknoteDto> ClientMoney { get; set; }
-
         public NullCashboxException()
         {
         }
@@ -22,5 +20,7 @@ namespace CoffeeMachine.Application.Exceptions.CustomExceptions
             : base(message, inner)
         {
         }
+
+        public List<BanknoteDto> ClientMoney { get; set; }
     }
 }

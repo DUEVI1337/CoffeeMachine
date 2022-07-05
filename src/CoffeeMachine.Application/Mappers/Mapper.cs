@@ -39,6 +39,5 @@ namespace CoffeeMachine.Application.Mappers
         }
 
         #endregion
-
     }
 }

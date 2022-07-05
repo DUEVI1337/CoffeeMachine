@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;

@@ -16,7 +16,6 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
-
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
@@ -25,6 +24,8 @@ namespace CoffeeMachine.Application.Services
     {
         private readonly IBalanceService _balanceService;
         private readonly IBanknoteCashboxService _banknoteCashboxService;
+
+        private readonly Func<int, int, int> _getAmountDeal = (clientMoney, coffeePrice) => clientMoney - coffeePrice;
         private readonly IIncomeService _incomeService;
         private readonly IPaymentService _paymentService;
         private readonly UnitOfWork _uow;
@@ -52,42 +53,15 @@ namespace CoffeeMachine.Application.Services
         {
             var amountClientMoney = GetAmountClientMoney(clientMoney);
             var cashbox = await _banknoteCashboxService.GetCashboxAsync();
-            var amountDeal = amountClientMoney - coffee.CoffeePrice;
+            var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice);
 
-            if (amountDeal < 0)
-                throw new NotEnoughMoneyException();
-
-            if (!cashbox.Select(x => x.CountBanknote != 0).Any())
-                throw new NullCashboxException();
-
-            List<BanknoteDto> deal = new();
-            List<BanknoteCashbox> updatedCashbox = new();
-
-            if (amountDeal == 0)
-                return deal;
+            if (!СheckPossibleGiveDeal(amountDeal, cashbox))
+                return null;
 
             clientMoney.ForEach(x =>
                 cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote += x.CountBanknote);
-            _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
-            (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
-            while (deal == null)
-            {
-                var newStrategy = DealFactory.GetNextDealStrategy(typeDeal.ToString());
-                if (newStrategy == null)
-                    throw new NullCashboxException();
-
-                typeDeal = Enum.Parse<TypeDeal>(newStrategy.Value.Key);
-                _dealContext = new DealContext(newStrategy.Value.Value);
-                (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
-            }
-
-            await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
-            _paymentService.AddPayment(amountClientMoney, coffee.CoffeeId, amountDeal);
-            await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
-            await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
-            await _uow.SaveChangesAsync();
-            Log.Information("New data was updated in database");
-
+            var (deal, updatedCashbox) = ExecuteStrategy(typeDeal, cashbox, amountDeal);
+            await AddChangesInDbAsync(coffee, updatedCashbox, amountClientMoney);
             return deal;
         }
 
@@ -116,6 +90,52 @@ namespace CoffeeMachine.Application.Services
         }
 
         /// <summary>
+        /// Add and save changes after buying coffee in database
+        /// </summary>
+        /// <param name="coffee">coffee from order of client</param>
+        /// <param name="updatedCashbox">updated cashbox of coffee machine</param>
+        /// <param name="clientMoney">money of client</param>
+        /// <returns></returns>
+        private async Task AddChangesInDbAsync(CoffeeDto coffee, List<BanknoteCashbox> updatedCashbox, int clientMoney)
+        {
+            var amountDeal = _getAmountDeal(clientMoney, coffee.CoffeePrice);
+
+            await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
+            _paymentService.AddPayment(clientMoney, coffee.CoffeeId, amountDeal);
+            await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
+            await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
+            await _uow.SaveChangesAsync();
+            Log.Information("New data updated in database");
+        }
+
+        /// <summary>
+        /// Executing strategy that give deal
+        /// </summary>
+        /// <param name="typeDeal">type of deal</param>
+        /// <param name="cashbox">cashbox of coffee machine</param>
+        /// <param name="amountDeal">amount money that need give client</param>
+        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/> and <see cref="List{T}"/> T2 <see cref="BanknoteCashbox"/> (Tuple)</returns>
+        /// <exception cref="NullCashboxException">impossible give deal</exception>
+        private (List<BanknoteDto>, List<BanknoteCashbox>) ExecuteStrategy(TypeDeal typeDeal,
+            List<BanknoteCashbox> cashbox, int amountDeal)
+        {
+            _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
+            var (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
+            while (deal == null)
+            {
+                var newStrategy = DealFactory.GetNextDealStrategy(typeDeal.ToString());
+                if (newStrategy == null)
+                    throw new NullCashboxException();
+
+                typeDeal = Enum.Parse<TypeDeal>(newStrategy.Value.Key);
+                _dealContext = new DealContext(newStrategy.Value.Value);
+                (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
+            }
+
+            return (deal, updatedCashbox);
+        }
+
+        /// <summary>
         /// Calculating amount money that client was injected into the coffee machine
         /// </summary>
         /// <param name="banknotes">banknote of client</param>
@@ -137,7 +157,7 @@ namespace CoffeeMachine.Application.Services
         /// </summary>
         /// <param name="cashbox">cashbox of coffee machine</param>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
-        private static List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox)
+        private List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox)
         {
             return cashbox.Select(banknote => new BanknoteCashbox
             {
@@ -145,6 +165,25 @@ namespace CoffeeMachine.Application.Services
                 CountBanknote = banknote.CountBanknote,
                 Denomination = banknote.Denomination
             }).ToList();
+        }
+
+        /// <summary>
+        /// Checking possible give deal to client
+        /// </summary>
+        /// <param name="amountDeal">amount money that need give client</param>
+        /// <param name="cashbox">cashbox of coffee machine</param>
+        /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
+        /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
+        /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
+        private bool СheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
+        {
+            if (amountDeal < 0)
+                throw new NotEnoughMoneyException();
+
+            if (!cashbox.Select(x => x.CountBanknote != 0).Any())
+                throw new NullCashboxException();
+
+            return amountDeal != 0;
         }
     }
 }

@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http.Json;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Exceptions.CustomExceptions;
 
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -45,22 +38,22 @@ namespace CoffeeMachine.Web
             }
             catch (NotEnoughMoneyException notMoneyEx)
             {
-                string logMessage = "money of client less than price of coffee";
+                var logMessage = "money of client less than price of coffee";
                 await CreateResponseAsync(notMoneyEx, _env, context, logMessage, (int)HttpStatusCode.BadRequest);
             }
             catch (NullCashboxException nullCashboxEx)
             {
-                string logMessage = "In cashbox of coffee machine not enough money!";
+                var logMessage = "In cashbox of coffee machine not enough money!";
                 await CreateResponseAsync(nullCashboxEx, _env, context, logMessage, (int)HttpStatusCode.BadRequest);
             }
             catch (NullReferenceException nullEx)
             {
-                string logMessage = "Nof found object";
+                var logMessage = "Nof found object";
                 await CreateResponseAsync(nullEx, _env, context, logMessage, (int)HttpStatusCode.NotFound);
             }
             catch (Exception ex)
             {
-                string logMessage = "Unknown error";
+                var logMessage = "Unknown error";
                 await CreateResponseAsync(ex, _env, context, logMessage, (int)HttpStatusCode.BadRequest);
             }
         }
@@ -74,7 +67,8 @@ namespace CoffeeMachine.Web
         /// <param name="logMessage">message that write in console</param>
         /// <param name="statusCode">status code of response</param>
         /// <returns></returns>
-        private async Task CreateResponseAsync(Exception ex, IWebHostEnvironment env, HttpContext context, string logMessage, int statusCode)
+        private async Task CreateResponseAsync(Exception ex, IWebHostEnvironment env, HttpContext context,
+            string logMessage, int statusCode)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;
@@ -82,13 +76,9 @@ namespace CoffeeMachine.Web
             Log.Error(ex.ToString());
 
             if (env.IsDevelopment())
-            {
                 await context.Response.WriteAsJsonAsync($"{ex}");
-            }
             else
-            {
                 await context.Response.WriteAsJsonAsync(logMessage);
-            }
         }
     }
 }

@@ -1,20 +1,11 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using CoffeeMachine.Application.Exceptions.CustomExceptions;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
-using CoffeeMachine.Web.Exceptions;
-using CoffeeMachine.Web.Exceptions.CustomExceptions;
 
 using Microsoft.AspNetCore.Mvc;
-
-using Serilog;
-
 
 namespace CoffeeMachine.Web.Controllers
 {
