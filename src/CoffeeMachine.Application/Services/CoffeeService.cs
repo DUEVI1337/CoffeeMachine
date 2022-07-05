@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Exceptions.CustomExceptions;
 using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Application.Strategy;
@@ -53,11 +54,11 @@ namespace CoffeeMachine.Application.Services
             var cashbox = await _banknoteCashboxService.GetCashboxAsync();
             var amountDeal = amountClientMoney - coffee.CoffeePrice;
 
-            if (amountDeal < 0 || !cashbox.Select(x => x.CountBanknote != 0).Any())
-            {
-                Log.Information("insufficient funds in cashbox of coffee machine or money of client less than price of coffee");
-                return null;
-            }
+            if (amountDeal < 0)
+                throw new NotEnoughMoneyException();
+
+            if (!cashbox.Select(x => x.CountBanknote != 0).Any())
+                throw new NullCashboxException();
 
             List<BanknoteDto> deal = new();
             List<BanknoteCashbox> updatedCashbox = new();
@@ -73,7 +74,7 @@ namespace CoffeeMachine.Application.Services
             {
                 var newStrategy = DealFactory.GetNextDealStrategy(typeDeal.ToString());
                 if (newStrategy == null)
-                    return null;
+                    throw new NullCashboxException();
 
                 typeDeal = Enum.Parse<TypeDeal>(newStrategy.Value.Key);
                 _dealContext = new DealContext(newStrategy.Value.Value);
@@ -98,13 +99,10 @@ namespace CoffeeMachine.Application.Services
         public async Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id)
         {
             if (!Guid.TryParse(id, out var idGuid))
-            {
-                Log.Information("Invalid id of coffee");
-                return null;
-            }
+                throw new NullReferenceException();
 
             var coffee = await _uow.CoffeeRepo.GetByIdAsync(idGuid);
-            return coffee == null ? null : Mapper.MapToCoffeeDto(coffee);
+            return coffee == null ? throw new NullReferenceException() : Mapper.MapToCoffeeDto(coffee);
         }
 
         /// <summary>

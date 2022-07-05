@@ -6,7 +6,6 @@ using CoffeeMachine.Application.Services;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
-using CoffeeMachine.Web.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -61,7 +60,7 @@ namespace CoffeeMachine.Web
             });
             services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseNpgsql(Configuration.GetConnectionString("DockerPgsql"));
+                opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
             });
             services.AddTransient<GlobalExceptionHandler>()
                 .AddScoped<CoffeeRepository>()

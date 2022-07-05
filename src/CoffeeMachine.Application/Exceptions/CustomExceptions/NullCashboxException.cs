@@ -3,13 +3,12 @@ using System.Collections.Generic;
 
 using CoffeeMachine.Domain.Dto;
 
-namespace CoffeeMachine.Web.Exceptions.CustomExceptions
+namespace CoffeeMachine.Application.Exceptions.CustomExceptions
 {
-    /// <summary>
-    /// Sent to client when impossible to give deal 
-    /// </summary>
     public class NullCashboxException : Exception
     {
+        public List<BanknoteDto> ClientMoney { get; set; }
+
         public NullCashboxException()
         {
         }

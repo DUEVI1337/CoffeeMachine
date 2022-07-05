@@ -1,6 +1,7 @@
 using System;
 
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -14,6 +15,10 @@ namespace CoffeeMachine.Web
         {
             return Host.CreateDefaultBuilder(args)
                 .UseSerilog()
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddJsonFile("dockerappsettings.json", optional: true, reloadOnChange: true);
+                })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
 

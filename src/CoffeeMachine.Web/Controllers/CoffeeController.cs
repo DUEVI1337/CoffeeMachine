@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Exceptions.CustomExceptions;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
@@ -43,13 +44,7 @@ namespace CoffeeMachine.Web.Controllers
         public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
         {
             var coffee = await _coffeeService.GetCoffeeDtoByIdAsync(order.CoffeeId);
-            if (coffee == null)
-                throw new NullReferenceException();
-
             var deal = await _coffeeService.BuyCoffeeAsync(coffee, order.Banknotes, (TypeDeal)order.TypeDeal);
-            if (deal == null)
-                throw new NullCashboxException();
-
             return deal;
         }
 
@@ -65,9 +60,6 @@ namespace CoffeeMachine.Web.Controllers
         public async Task<CoffeeDto> GetCoffeeDtoById(string id)
         {
             var coffee = await _coffeeService.GetCoffeeDtoByIdAsync(id);
-            if (coffee == null)
-                throw new NullReferenceException();
-
             return coffee;
         }
 
