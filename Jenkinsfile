@@ -11,27 +11,29 @@ pipeline {
   }
   stages {
     stage('Build') {
-      agent { dockerfile true }
       environment {
           ASPNETCORE_ENVIRONMENT = 'Production'
           DOTNET_CLI_TELEMETRY_OPTOUT = 'true'
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 'true'
       }
 	  steps {
-        sh(script: 'dotnet restore CoffeeMachine.sln',
+        bat(script: 'dotnet restore CoffeeMachine.sln',
             label: 'Restore')
-        sh(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
+        bat(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
             label: 'build app')
-        sh(script: 'dotnet publish CoffeeMachine.sln--configuration Release --output app',
+        bat(script: 'dotnet test tests/CoffeeMachine.UnitTests/CoffeeMachine.UnitTests.csproj',
+            label: 'unit tests')
+        bat(script: 'dotnet test tests/CoffeeMachine.IntegrationTests/CoffeeMachine.IntegrationTests.csproj',
+            label: 'integration tests')
+        bat(script: 'dotnet publish CoffeeMachine.sln --configuration Release --output app',
             label: 'publish app')
-         sh(script: 'chmod -R 777 app/',
-          label: 'changed rules on app directory')
       }
     }
- 
     stage('Docker image create and push') {
       when {
-        branch 'HRI-14'
+        not {
+          branch 'main'
+        }
       }
       steps {
         script {
