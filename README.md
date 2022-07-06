@@ -1,6 +1,12 @@
 # CoffeeMachine_Duvanov
 
 
+## Jenkins
+
+[![build status][badge]][jenkins]
+
+[badge]: https://jenkins.tomskasu.ru/job/trainee/job/CoffeeMachine_Duvanov/job/main/badge/icon
+[jenkins]: https://jenkins.tomskasu.ru/job/trainee/job/CoffeeMachine_Duvanov/job/main/
 
 ## Getting started
 
