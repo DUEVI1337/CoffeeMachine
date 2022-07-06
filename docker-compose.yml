@@ -11,7 +11,6 @@ services:
       context: .
       dockerfile: src/CoffeeMachine.Web/Dockerfile
     links:
-        - jenkins
         - postgres
 
   postgres: 
@@ -24,19 +23,4 @@ services:
     ports:
         - 5432:5432
     container_name: postgres
-    links:
-        - jenkins
-
-  jenkins: 
-    restart: on-failure:10
-    image: jenkins/jenkins:lts-alpine
-    container_name: jenkins
-    privileged: true
-    user: root
-    ports:
-        - 0.0.0.0:8080:8080
-    volumes:
-        - ~/jenkins_home:/var/jenkins_home
-        - /var/run/docker.sock:/var/run/docker.sock
-        - /usr/local/bin/docker:/usr/local/bin/docker
     
