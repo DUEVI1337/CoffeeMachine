@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CoffeeMachine.Application.Strategy.Base;
-using CoffeeMachine.Domain.Dto;
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 
 using Serilog;
@@ -22,12 +22,6 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             return cashbox.Where(x => x.Denomination >= deal && x.CountBanknote > 0).ToList();
         };
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="cashbox"><inheritdoc/></param>
-        /// <param name="amountDeal"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
         public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {

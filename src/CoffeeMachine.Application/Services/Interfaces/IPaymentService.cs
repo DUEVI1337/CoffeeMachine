@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using CoffeeMachine.Domain.Entities;
+﻿using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Services.Interfaces
 {

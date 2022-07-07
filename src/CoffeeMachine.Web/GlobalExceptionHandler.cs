@@ -44,7 +44,7 @@ namespace CoffeeMachine.Web
             catch (NullCashboxException nullCashboxEx)
             {
                 var logMessage = "In cashbox of coffee machine not enough money!";
-                await CreateResponseAsync(nullCashboxEx, _env, context, logMessage, (int)HttpStatusCode.BadRequest);
+                await CreateResponseAsync(nullCashboxEx, _env, context, logMessage, (int)HttpStatusCode.InternalServerError);
             }
             catch (NullReferenceException nullEx)
             {
@@ -54,7 +54,7 @@ namespace CoffeeMachine.Web
             catch (Exception ex)
             {
                 var logMessage = "Unknown error";
-                await CreateResponseAsync(ex, _env, context, logMessage, (int)HttpStatusCode.BadRequest);
+                await CreateResponseAsync(ex, _env, context, logMessage, (int)HttpStatusCode.InternalServerError);
             }
         }
 

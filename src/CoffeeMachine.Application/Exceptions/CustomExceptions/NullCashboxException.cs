@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using CoffeeMachine.Domain.Dto;
+using CoffeeMachine.Application.Dto;
 
 namespace CoffeeMachine.Application.Exceptions.CustomExceptions
 {
+    /// <summary>
+    /// Sent to client when not enough money in coffee machine cashbox
+    /// </summary>
     public class NullCashboxException : Exception
     {
         public NullCashboxException()

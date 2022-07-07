@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services.Interfaces;
-using CoffeeMachine.Domain.Dto;
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
@@ -13,9 +13,6 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
     public class BalanceService : IBalanceService
     {
         private readonly UnitOfWork _uow;
@@ -25,22 +22,12 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <returns><inheritdoc/></returns>
         public async Task<List<BalanceDto>> GetBalancesDtoAsync()
         {
             var balances = await _uow.BalanceRepo.GetAllAsync();
             return balances.Select(x => Mapper.MapToBalanceDto(x)).ToList();
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="coffeeId"><inheritdoc/></param>
-        /// <param name="coffeePrice"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
         public async Task UpdateBalanceAsync(string coffeeId, int coffeePrice)
         {
             var balances = await _uow.BalanceRepo.GetAllAsync();

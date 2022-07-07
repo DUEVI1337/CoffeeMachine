@@ -3,7 +3,7 @@ pipeline {
   options {
     timestamps()
     timeout(time: 1, unit: 'HOURS')
-    gitLabConnection('https://gitlab.tomskasu.ru/trainee/back-intern/coffeemachine_duvanov')
+    gitLabConnection('tomskasu')
     gitlabBuilds(builds: ['Build', 'Docker image create and push'])
   }
   environment {
@@ -70,5 +70,13 @@ pipeline {
           [pattern: 'bin', type: 'INCLUDE'],
           [pattern: 'app', type: 'INCLUDE']])
     }
+    failure {
+        updateGitlabCommitStatus name: 'Build', state: 'failed'
+        updateGitlabCommitStatus name: 'Docker image create and push', state: 'failed'
+      }
+    success {
+        updateGitlabCommitStatus name: 'Build', state: 'success'
+        updateGitlabCommitStatus name: 'Docker image create and push', state: 'success'
+      }
   }
 }

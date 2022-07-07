@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using CoffeeMachine.Domain.Dto;
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Strategy.Base
@@ -11,7 +11,10 @@ namespace CoffeeMachine.Application.Strategy.Base
     /// </summary>
     public abstract class BaseStrategyDeal
     {
-        private const int BreakIndexLoop = -1;
+        /// <summary>
+        /// index that stoops loop
+        /// </summary>
+        private const int BREAK_INDEX_LOOP = -1;
 
         /// <summary>
         /// Add banknotes in deal
@@ -46,7 +49,7 @@ namespace CoffeeMachine.Application.Strategy.Base
                 return cashbox.IndexOf(cashbox.FirstOrDefault(x =>
                     x.Denomination <= amountDeal && x.CountBanknote != 0));
 
-            return amountDeal == 0 ? BreakIndexLoop : index;
+            return amountDeal == 0 ? BREAK_INDEX_LOOP : index;
         }
     }
 }

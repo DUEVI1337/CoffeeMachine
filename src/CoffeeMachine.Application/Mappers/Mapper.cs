@@ -1,4 +1,4 @@
-﻿using CoffeeMachine.Domain.Dto;
+﻿using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Mappers
@@ -8,8 +8,6 @@ namespace CoffeeMachine.Application.Mappers
     /// </summary>
     public class Mapper
     {
-        #region MappersBalance
-
         /// <summary>
         /// Convert <see cref="Balance"/> to <see cref="BalanceDto"/>
         /// </summary>
@@ -23,10 +21,6 @@ namespace CoffeeMachine.Application.Mappers
             };
         }
 
-        #endregion
-
-        #region MappersCoffee
-
         /// <summary>
         /// Convert <see cref="Coffee"/> to <see cref="CoffeeDto"/>
         /// </summary>
@@ -38,6 +32,5 @@ namespace CoffeeMachine.Application.Mappers
                 { CoffeeId = coffee.CoffeeId.ToString(), CoffeeName = coffee.Name, CoffeePrice = coffee.Price };
         }
 
-        #endregion
     }
 }
