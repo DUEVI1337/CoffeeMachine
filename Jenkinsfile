@@ -50,7 +50,7 @@ pipeline {
         branch 'main'
       }
       steps {
-        gitlabCommitStatus("Build") {
+        gitlabCommitStatus("Docker image create and push") {
 			sh(script: 'docker login registry.tomskasu.ru -u DuvanovEV -p glpat-1NzivAPBXwNtWXuCPF-8')
 			script {
 			  def BackImage = docker.build("${env:NAME}:${env:TAG}")
@@ -64,14 +64,6 @@ pipeline {
   }
  
   post {
-    failure {
-      updateGitlabCommitStatus name: 'Build', state: 'failed'
-            updateGitlabCommitStatus name: 'Docker image create and push', state: 'failed'
-    }
-    success {
-      updateGitlabCommitStatus name: 'Build', state: 'success'
-      updateGitlabCommitStatus name: 'Docker image create and push', state: 'success'
-    }
     always {
       cleanWs(cleanWhenNotBuilt: false,
         deleteDirs: true,
