@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using CoffeeMachine.Application.Strategy.Base;
-using CoffeeMachine.Domain.Dto;
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Strategy.Contexts

@@ -8,7 +8,7 @@ using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Application.Strategy;
 using CoffeeMachine.Application.Strategy.Contexts;
-using CoffeeMachine.Domain.Dto;
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
@@ -16,9 +16,6 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
     public class CoffeeService : ICoffeeService
 
     {
@@ -41,13 +38,6 @@ namespace CoffeeMachine.Application.Services
             _balanceService = balanceService;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="coffee"><inheritdoc/></param>
-        /// <param name="clientMoney"><inheritdoc/></param>
-        /// <param name="typeDeal"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
         public async Task<List<BanknoteDto>> BuyCoffeeAsync(CoffeeDto coffee, List<BanknoteDto> clientMoney,
             TypeDeal typeDeal)
         {
@@ -65,11 +55,6 @@ namespace CoffeeMachine.Application.Services
             return deal;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="id">id coffee</param>
-        /// <returns><inheritdoc/></returns>
         public async Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id)
         {
             if (!Guid.TryParse(id, out var idGuid))
@@ -79,10 +64,6 @@ namespace CoffeeMachine.Application.Services
             return coffee == null ? throw new NullReferenceException() : Mapper.MapToCoffeeDto(coffee);
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <returns><inheritdoc/></returns>
         public async Task<List<CoffeeDto>> GetListCoffeeDtoAsync()
         {
             var coffees = await _uow.CoffeeRepo.GetAllAsync();

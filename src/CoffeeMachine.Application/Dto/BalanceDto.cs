@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoffeeMachine.Domain.Dto
+namespace CoffeeMachine.Application.Dto
 {
     /// <summary>
     /// represent 'Balance' in database

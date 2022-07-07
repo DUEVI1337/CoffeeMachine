@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Services;
-using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
@@ -24,6 +22,40 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         private BalanceService _balanceService;
         private DataContext _db;
 
+        [Test]
+        public async Task GetBalancesDtoAsync_CheckBalanceFromDb_ReturnListBalanceDto()
+        {
+            //Arrange
+            const int earnedMoney = 100;
+            List<Balance> balancesInDb = new()
+            {
+                new Balance { CoffeeId = Guid.NewGuid(), BalanceId = Guid.NewGuid(), EarnedMoney = earnedMoney },
+                new Balance { CoffeeId = Guid.NewGuid(), BalanceId = Guid.NewGuid(), EarnedMoney = earnedMoney },
+            };
+            _db.Balances.AddRange(balancesInDb);
+            await _db.SaveChangesAsync();
+            List<BalanceDto> balancesDtoExpected = new()
+            {
+                new BalanceDto
+                {
+                    CoffeeId = balancesInDb[0].CoffeeId, BalanceId = balancesInDb[0].BalanceId,
+                    EarnedMoney = earnedMoney
+                },
+                new BalanceDto
+                {
+                    CoffeeId = balancesInDb[1].CoffeeId, BalanceId = balancesInDb[1].BalanceId,
+                    EarnedMoney = earnedMoney
+                },
+            };
+
+            //Act
+            var balancesDtoActual = await _balanceService.GetBalancesDtoAsync();
+
+            //Assert
+            await _db.DisposeAsync();
+            balancesDtoActual.Should().BeEquivalentTo(balancesDtoExpected);
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -36,36 +68,10 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         }
 
         [Test]
-        public async Task GetBalancesDtoAsync_CheckBalanceFromDb_ReturnListBalanceDto()
-        {
-            //Arrange
-            const int earnedMoney = 100;
-            List<Balance> balancesInDb = new ()
-            {
-                new Balance {CoffeeId = Guid.NewGuid(), BalanceId = Guid.NewGuid(), EarnedMoney = earnedMoney},
-                new Balance {CoffeeId = Guid.NewGuid(), BalanceId = Guid.NewGuid(), EarnedMoney = earnedMoney},
-            };
-            _db.Balances.AddRange(balancesInDb);
-            await _db.SaveChangesAsync();
-            List<BalanceDto> balancesDtoExpected = new ()
-            {
-                new BalanceDto {CoffeeId = balancesInDb[0].CoffeeId, BalanceId = balancesInDb[0].BalanceId, EarnedMoney = earnedMoney},
-                new BalanceDto {CoffeeId = balancesInDb[1].CoffeeId, BalanceId = balancesInDb[1].BalanceId, EarnedMoney = earnedMoney},
-            };
-
-            //Act
-            List<BalanceDto> balancesDtoActual = await _balanceService.GetBalancesDtoAsync();
-
-            //Assert
-            await _db.DisposeAsync();
-            balancesDtoActual.Should().BeEquivalentTo(balancesDtoExpected);
-        }
-
-        [Test]
         public async Task UpdateBalanceAsync_CheckUpdateBalanceInDb_AddNewBalanceInDb()
         {
             //Arrange
-            string coffeeId = Guid.NewGuid().ToString();
+            var coffeeId = Guid.NewGuid().ToString();
             const int coffeePrice = 100;
             const int numberBalanceExpected = 1;
 
@@ -74,7 +80,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
 
             //Assert
-            int numberBalanceActual = _db.Balances.ToList().Count;
+            var numberBalanceActual = _db.Balances.ToList().Count;
             await _db.DisposeAsync();
             Assert.That(numberBalanceActual, Is.EqualTo(numberBalanceExpected));
         }
@@ -83,7 +89,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         public async Task UpdateBalanceAsync_CheckUpdateBalanceInDb_UpdateBalanceInDb()
         {
             //Arrange
-            string coffeeId = Guid.NewGuid().ToString();
+            var coffeeId = Guid.NewGuid().ToString();
             const int coffeePrice = 100;
             _db.Balances.Add(new Balance
             {
@@ -97,7 +103,8 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
 
             //Assert
-            int earnedMoneyBalanceActual = _db.Balances.FirstOrDefault(x=>x.CoffeeId == Guid.Parse(coffeeId)).EarnedMoney;
+            var earnedMoneyBalanceActual =
+                _db.Balances.FirstOrDefault(x => x.CoffeeId == Guid.Parse(coffeeId)).EarnedMoney;
             await _db.DisposeAsync();
             Assert.That(earnedMoneyBalanceActual, Is.EqualTo(earnedMoneyBalanceExpected));
         }

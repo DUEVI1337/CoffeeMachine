@@ -8,9 +8,6 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
     public class PaymentService : IPaymentService
     {
         private readonly UnitOfWork _uow;
@@ -20,13 +17,6 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="clientMoney"><inheritdoc/></param>
-        /// <param name="coffeeId"><inheritdoc/></param>
-        /// <param name="amountDeal"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
         public void AddPayment(int clientMoney, string coffeeId, int amountDeal)
         {
             _uow.PaymentRepo.Add(new Payment

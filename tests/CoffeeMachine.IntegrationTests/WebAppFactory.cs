@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Web;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CoffeeMachine.IntegrationTests
 {
-    public class WebAppFactory : 
+    public class WebAppFactory :
         WebApplicationFactory<Startup>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -21,10 +20,7 @@ namespace CoffeeMachine.IntegrationTests
                 var descriptor = services.SingleOrDefault(d => d.ServiceType ==
                                                                typeof(DbContextOptions<DataContext>));
                 services.Remove(descriptor);
-                services.AddDbContext<DataContext>(opt =>
-                {
-                    opt.UseInMemoryDatabase("testDb");
-                });
+                services.AddDbContext<DataContext>(opt => { opt.UseInMemoryDatabase("testDb"); });
             });
         }
     }

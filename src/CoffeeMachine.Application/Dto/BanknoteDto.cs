@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CoffeeMachine.Domain.Dto
+namespace CoffeeMachine.Application.Dto
 {
     /// <summary>
     /// available denomination of banknote

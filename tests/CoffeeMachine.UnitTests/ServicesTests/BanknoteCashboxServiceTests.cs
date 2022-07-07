@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Services;
-using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
@@ -24,6 +21,26 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         private BanknoteCashboxService _cashboxService;
         private DataContext _db;
 
+        [Test]
+        public async Task GetCashboxAsync_AddCashboxInDb_ReturnSameCount()
+        {
+            //Arrange
+            List<BanknoteCashbox> cashboxExpected = new()
+            {
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 100, CountBanknote = 10 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 10 },
+            };
+            _db.BanknoteCashboxes.AddRange(cashboxExpected);
+            await _db.SaveChangesAsync();
+
+            //Act
+            var cashboxActual = await _cashboxService.GetCashboxAsync();
+
+            //Assert
+            await _db.DisposeAsync();
+            Assert.That(cashboxActual, Has.Count.EqualTo(cashboxExpected.Count));
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -34,26 +51,6 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
                 new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
             _cashboxService = new BanknoteCashboxService(uow);
-        }
-
-        [Test]
-        public async Task GetCashboxAsync_AddCashboxInDb_ReturnSameCount()
-        {
-            //Arrange
-            List<BanknoteCashbox> cashboxExpected = new ()
-            {
-                new BanknoteCashbox {BanknoteId = Guid.NewGuid(), Denomination = 100, CountBanknote = 10},
-                new BanknoteCashbox {BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 10},
-            };
-            _db.BanknoteCashboxes.AddRange(cashboxExpected);
-            await _db.SaveChangesAsync();
-
-            //Act
-            List<BanknoteCashbox> cashboxActual = await _cashboxService.GetCashboxAsync();
-
-            //Assert
-            await _db.DisposeAsync();
-            Assert.That(cashboxActual, Has.Count.EqualTo(cashboxExpected.Count));
         }
 
         [Test]
@@ -69,8 +66,8 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
             List<BanknoteCashbox> cashboxExpected = new()
             {
-                new BanknoteCashbox {BanknoteId = cashboxInDb[0].BanknoteId, CountBanknote = 15, Denomination = 100},
-                new BanknoteCashbox {BanknoteId = cashboxInDb[1].BanknoteId, CountBanknote = 20, Denomination = 200}
+                new BanknoteCashbox { BanknoteId = cashboxInDb[0].BanknoteId, CountBanknote = 15, Denomination = 100 },
+                new BanknoteCashbox { BanknoteId = cashboxInDb[1].BanknoteId, CountBanknote = 20, Denomination = 200 }
             };
 
             //Act

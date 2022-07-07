@@ -1,4 +1,4 @@
-﻿namespace CoffeeMachine.Domain.Dto
+﻿namespace CoffeeMachine.Application.Dto
 {
     /// <summary>
     /// represent 'coffee' in database

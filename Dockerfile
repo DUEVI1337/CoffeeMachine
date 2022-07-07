@@ -1,10 +1,8 @@
-FROM alpine
-
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 8099
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["src/CoffeeMachine.Web/CoffeeMachine.Web.csproj", "src/CoffeeMachine.Web/"]
 COPY ["src/CoffeeMachine.Application/CoffeeMachine.Application.csproj", "src/CoffeeMachine.Application/"]

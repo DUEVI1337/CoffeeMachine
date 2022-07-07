@@ -10,9 +10,6 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
     public class BanknoteCashboxService : IBanknoteCashboxService
     {
         private readonly UnitOfWork _uow;
@@ -22,20 +19,11 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <returns></returns>
         public async Task<List<BanknoteCashbox>> GetCashboxAsync()
         {
             return await _uow.BanknoteCashboxRepo.GetAllAsync();
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="updatedCashbox"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
         public async Task UpdateCashboxAsync(List<BanknoteCashbox> updatedCashbox)
         {
             var cashbox = await _uow.BanknoteCashboxRepo.GetAllAsync();

@@ -22,11 +22,6 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="coffeePrice"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
         public async Task AddIncomeAsync(int coffeePrice)
         {
             var income = await _uow.IncomeRepo.GetAllAsync();

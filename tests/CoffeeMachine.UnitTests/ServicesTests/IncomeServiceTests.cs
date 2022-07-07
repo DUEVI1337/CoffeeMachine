@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Services;
-using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
-
-using FluentAssertions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -21,19 +15,8 @@ namespace CoffeeMachine.UnitTests.ServicesTests
 {
     public class IncomeServiceTests
     {
-        private IncomeService _incomeService;
         private DataContext _db;
-
-        [SetUp]
-        public void Setup()
-        {
-            var _dbOptions = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-            _db = new DataContext(_dbOptions);
-            var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
-                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
-            _incomeService = new IncomeService(uow);
-        }
+        private IncomeService _incomeService;
 
         [Test]
         public async Task AddIncomeAsync_CheckNewIncomeInDb_AddNewIncomeInDb()
@@ -47,7 +30,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
 
             //Assert
-            int numberIncomeActual = _db.Incomes.ToList().Count;
+            var numberIncomeActual = _db.Incomes.ToList().Count;
             await _db.DisposeAsync();
             Assert.That(numberIncomeActual, Is.EqualTo(numberIncomeExpected));
         }
@@ -71,9 +54,20 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
 
             //Assert
-            int totslIncomeActual = _db.Incomes.FirstOrDefault(x => x.Date.Day == DateTime.UtcNow.Day).TotalIncome;
+            var totslIncomeActual = _db.Incomes.FirstOrDefault(x => x.Date.Day == DateTime.UtcNow.Day).TotalIncome;
             await _db.DisposeAsync();
             Assert.That(totslIncomeActual, Is.EqualTo(totalIncomeExpected));
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            var _dbOptions = new DbContextOptionsBuilder<DataContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
+            _db = new DataContext(_dbOptions);
+            var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
+                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
+            _incomeService = new IncomeService(uow);
         }
     }
 }
