@@ -27,20 +27,22 @@ pipeline {
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 'true'
       }
 	    steps {
-          withSonarQubeEnv('sonar.tomskasu.ru') {
-              sh(script: 'dotnet restore CoffeeMachine.sln',
-                  label: 'Restore')
-              sh(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
-                  label: 'build app')
-              sh(script: 'dotnet test tests/CoffeeMachine.UnitTests/CoffeeMachine.UnitTests.csproj --logger "trx;LogFileName=unit_tests.xml"',
-                  label: 'unit tests')  
-              sh(script: 'dotnet test tests/CoffeeMachine.IntegrationTests/CoffeeMachine.IntegrationTests.csproj --logger "trx;LogFileName=integration_tests.xml"',
-                  label: 'integration tests')  
-          }	        
-          sh(script: 'dotnet publish CoffeeMachine.sln --configuration Release --output app',
-            label: 'publish app')      
-          sh(script: 'chmod -R 777 app/',
-            label: 'changed rules on app directory')
+	      gitlabCommitStatus("Build") {
+			  withSonarQubeEnv('sonar.tomskasu.ru') {
+				  sh(script: 'dotnet restore CoffeeMachine.sln',
+					  label: 'Restore')
+				  sh(script: 'dotnet build CoffeeMachine.sln --configuration Release --no-restore',
+					  label: 'build app')
+				  sh(script: 'dotnet test tests/CoffeeMachine.UnitTests/CoffeeMachine.UnitTests.csproj --logger "trx;LogFileName=unit_tests.xml"',
+					  label: 'unit tests')  
+				  sh(script: 'dotnet test tests/CoffeeMachine.IntegrationTests/CoffeeMachine.IntegrationTests.csproj --logger "trx;LogFileName=integration_tests.xml"',
+					  label: 'integration tests')  
+			  }	        
+			  sh(script: 'dotnet publish CoffeeMachine.sln --configuration Release --output app',
+				label: 'publish app')      
+			  sh(script: 'chmod -R 777 app/',
+				label: 'changed rules on app directory')
+	      }
       }
     }
     stage('Docker image create and push') {
@@ -48,12 +50,14 @@ pipeline {
         branch 'main'
       }
       steps {
-        sh(script: 'docker login registry.tomskasu.ru -u DuvanovEV -p glpat-1NzivAPBXwNtWXuCPF-8')
-        script {
-          def BackImage = docker.build("${env:NAME}:${env:TAG}")
-          BackImage.push()
- 
-          BackImage.push("${env:BUILD_NUMBER}")
+        gitlabCommitStatus("Build") {
+			sh(script: 'docker login registry.tomskasu.ru -u DuvanovEV -p glpat-1NzivAPBXwNtWXuCPF-8')
+			script {
+			  def BackImage = docker.build("${env:NAME}:${env:TAG}")
+			  BackImage.push()
+	 
+			  BackImage.push("${env:BUILD_NUMBER}")
+			}
         }
       }
     }
@@ -70,13 +74,5 @@ pipeline {
           [pattern: 'bin', type: 'INCLUDE'],
           [pattern: 'app', type: 'INCLUDE']])
     }
-    failure {
-        updateGitlabCommitStatus name: 'Build', state: 'failed'
-        updateGitlabCommitStatus name: 'Docker image create and push', state: 'failed'
-      }
-    success {
-        updateGitlabCommitStatus name: 'Build', state: 'success'
-        updateGitlabCommitStatus name: 'Docker image create and push', state: 'success'
-      }
   }
 }

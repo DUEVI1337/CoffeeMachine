@@ -1,14 +1,14 @@
 using System;
 
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Mappers;
-using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 
 using FluentAssertions;
 
 using NUnit.Framework;
 
-namespace CoffeeMachine.IntegrationTests
+namespace CoffeeMachine.UnitTests
 {
     [TestFixture]
     public class MapperTests

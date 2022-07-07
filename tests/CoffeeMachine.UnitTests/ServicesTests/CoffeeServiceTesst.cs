@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services;
-using CoffeeMachine.Domain.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
