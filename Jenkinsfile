@@ -51,7 +51,7 @@ pipeline {
       }
       steps {
         gitlabCommitStatus("Docker image create and push") {
-			sh(script: 'docker login registry.tomskasu.ru -u DuvanovEV -p glpat-xrL3z-xNC-o4VTvajyuJ')
+			sh(script: 'docker login registry.tomskasu.ru -u DuvanovEV -p glpat-LmoHGrSzH75HgZLcaWma')
 			script {
 			  def BackImage = docker.build("${env:NAME}:${env:TAG}")
 			  BackImage.push()
