@@ -64,6 +64,14 @@ pipeline {
   }
  
   post {
+    failure {
+      updateGitlabCommitStatus name: 'Build', state: 'failed'
+            updateGitlabCommitStatus name: 'Docker image create and push', state: 'failed'
+    }
+    success {
+      updateGitlabCommitStatus name: 'Build', state: 'success'
+      updateGitlabCommitStatus name: 'Docker image create and push', state: 'success'
+    }
     always {
       cleanWs(cleanWhenNotBuilt: false,
         deleteDirs: true,
