@@ -29,7 +29,7 @@ namespace CoffeeMachine.Application.Services
             var cashbox = await _uow.BanknoteCashboxRepo.GetAllAsync();
             foreach (var banknote in updatedCashbox)
             {
-                cashbox.FirstOrDefault(x => x.BanknoteId == banknote.BanknoteId).CountBanknote =
+                cashbox.FirstOrDefault(x => x.BanknoteId == banknote.BanknoteId)!.CountBanknote =
                     banknote.CountBanknote;
             }
 

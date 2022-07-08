@@ -37,13 +37,13 @@ namespace CoffeeMachine.Application.Strategy.Base
         }
 
         /// <summary>
-        /// Check amount of deal, find need index of banknote in cashbox of coffee machine or return 'BreakIndexLoop'
+        /// Check amount of deal, find need index of banknote in cashbox of coffee machine or return 'BREAK_INDEX_LOOP'
         /// </summary>
-        /// <param name="index">index of list</param>
+        /// <param name="index">index of loop</param>
         /// <param name="cashbox">cashbox of coffee machine</param>
         /// <param name="amountDeal">amount of deal</param>
         /// <returns><see cref="int"/>, new value of iterator loop</returns>
-        protected static int CheckDeal(int index, List<BanknoteCashbox> cashbox, int amountDeal)
+        protected static int GetBanknoteIndex(int index, List<BanknoteCashbox> cashbox, int amountDeal)
         {
             if ((cashbox[index].Denomination > amountDeal || index == cashbox.Count - 1) && amountDeal > 0)
                 return cashbox.IndexOf(cashbox.FirstOrDefault(x =>

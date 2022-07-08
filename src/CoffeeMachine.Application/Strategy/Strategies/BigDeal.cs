@@ -15,32 +15,28 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class BigDeal : IDeal
     {
-        private readonly Action<List<BanknoteCashbox>> _sortList = cashbox =>
-        {
-            cashbox.Sort();
-            cashbox.Reverse();
-        };
-
         public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
-            var numberBanknoteDeal = 0;
-            _sortList(cashbox);
+            cashbox.Reverse();
             foreach (var banknote in cashbox.Where(banknote =>
                          banknote.Denomination <= amountDeal && banknote.CountBanknote > 0))
             {
-                do
+                var numberBanknoteDeal = amountDeal / banknote.Denomination;
+                if (numberBanknoteDeal <= banknote.CountBanknote)
                 {
-                    amountDeal -= banknote.Denomination;
-                    banknote.CountBanknote--;
-                    numberBanknoteDeal++;
+                    amountDeal -= banknote.Denomination * numberBanknoteDeal;
+                    banknote.CountBanknote -= numberBanknoteDeal;
                 }
-                while (banknote.CountBanknote > 0 &&
-                       banknote.Denomination <= amountDeal);
+                else
+                {
+                    numberBanknoteDeal = banknote.CountBanknote;
+                    amountDeal -= banknote.Denomination * numberBanknoteDeal;
+                    banknote.CountBanknote = 0;
+                }
 
                 deal.Add(new BanknoteDto { Denomination = banknote.Denomination, CountBanknote = numberBanknoteDeal });
-                numberBanknoteDeal = 0;
             }
 
             if (amountDeal == 0)

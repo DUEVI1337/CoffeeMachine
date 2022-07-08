@@ -163,7 +163,7 @@ namespace CoffeeMachine.IntegrationTests
             };
 
             //Act
-            var coffeesActual = await _client.GetFromJsonAsync("coffee/v1/MenuCoffee", typeof(List<CoffeeDto>));
+            var coffeesActual = await _client.GetFromJsonAsync("coffee/v1/CoffeeMenu", typeof(List<CoffeeDto>));
 
             //Assert
             _db.Database.EnsureDeleted();

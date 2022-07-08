@@ -50,12 +50,12 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             const int amountDealExpected = 1400;
 
             //Act
-            var deal = await _coffeeService.BuyCoffeeAsync(Mapper.MapToCoffeeDto(coffee), clientMoney, typeDeal);
+            var deal = await _coffeeService.BuyCoffeeAsync(coffee.CoffeeId.ToString(), clientMoney, typeDeal);
 
             //Assert
             await _db.DisposeAsync();
             var amountDealActual = deal.Sum(x => x.Denomination * x.CountBanknote);
-            Assert.AreEqual(amountDealExpected, amountDealActual);
+            Assert.That(amountDealActual, Is.EqualTo(amountDealExpected));
         }
 
         [Test]
@@ -119,9 +119,9 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         [SetUp]
         public void Setup()
         {
-            var _dbOptions = new DbContextOptionsBuilder<DataContext>()
+            var dbOptions = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-            _db = new DataContext(_dbOptions);
+            _db = new DataContext(dbOptions);
             _db.Database.EnsureDeleted();
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
                 new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));

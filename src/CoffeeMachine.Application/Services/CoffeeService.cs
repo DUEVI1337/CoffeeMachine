@@ -38,9 +38,10 @@ namespace CoffeeMachine.Application.Services
             _balanceService = balanceService;
         }
 
-        public async Task<List<BanknoteDto>> BuyCoffeeAsync(CoffeeDto coffee, List<BanknoteDto> clientMoney,
+        public async Task<List<BanknoteDto>> BuyCoffeeAsync(string  idCoffee, List<BanknoteDto> clientMoney,
             TypeDeal typeDeal)
         {
+            var coffee = await GetCoffeeDtoByIdAsync(idCoffee);
             var amountClientMoney = GetAmountClientMoney(clientMoney);
             var cashbox = await _banknoteCashboxService.GetCashboxAsync();
             var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice);
@@ -101,7 +102,7 @@ namespace CoffeeMachine.Application.Services
             List<BanknoteCashbox> cashbox, int amountDeal)
         {
             _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
-            var (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
+            var (deal, updatedCashbox) = _dealContext.GiveDeal(GetCashboxSort(cashbox, amountDeal), amountDeal);
             while (deal == null)
             {
                 var newStrategy = DealFactory.GetNextDealStrategy(typeDeal.ToString());
@@ -110,7 +111,7 @@ namespace CoffeeMachine.Application.Services
 
                 typeDeal = Enum.Parse<TypeDeal>(newStrategy.Value.Key);
                 _dealContext = new DealContext(newStrategy.Value.Value);
-                (deal, updatedCashbox) = _dealContext.GiveDeal(GetCopyCashbox(cashbox), amountDeal);
+                (deal, updatedCashbox) = _dealContext.GiveDeal(GetCashboxSort(cashbox, amountDeal), amountDeal);
             }
 
             return (deal, updatedCashbox);
@@ -138,25 +139,27 @@ namespace CoffeeMachine.Application.Services
         /// </summary>
         /// <param name="cashbox">cashbox of coffee machine</param>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
-        private List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox)
+        private List<BanknoteCashbox> GetCashboxSort(List<BanknoteCashbox> cashbox, int amountDeal)
         {
-            return cashbox.Select(banknote => new BanknoteCashbox
+            var copyCashbox = cashbox.Select(banknote => new BanknoteCashbox
             {
                 BanknoteId = banknote.BanknoteId,
                 CountBanknote = banknote.CountBanknote,
                 Denomination = banknote.Denomination
-            }).ToList();
+            }).Where(x => x.Denomination >= amountDeal && x.CountBanknote > 0).ToList();
+            copyCashbox.Sort();
+            return copyCashbox;
         }
 
-        /// <summary>
-        /// Checking possible give deal to client
-        /// </summary>
-        /// <param name="amountDeal">amount money that need give client</param>
-        /// <param name="cashbox">cashbox of coffee machine</param>
-        /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
-        /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
-        /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
-        private bool СheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
+    /// <summary>
+    /// Checking possible give deal to client
+    /// </summary>
+    /// <param name="amountDeal">amount money that need give client</param>
+    /// <param name="cashbox">cashbox of coffee machine</param>
+    /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
+    /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
+    /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
+    private bool СheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
         {
             if (amountDeal < 0)
                 throw new NotEnoughMoneyException();

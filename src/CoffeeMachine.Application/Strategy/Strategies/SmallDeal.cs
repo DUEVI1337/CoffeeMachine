@@ -15,42 +15,40 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class SmallDeal : BaseStrategyDeal, IDeal
     {
-        private readonly Func<List<BanknoteCashbox>, int, List<BanknoteCashbox>> _sortList = (cashbox, deal) =>
-        {
-            cashbox.Sort();
-            return cashbox.Where(x => x.Denomination >= deal && x.CountBanknote > 0).ToList();
-        };
-
         public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
-            cashbox = _sortList(cashbox, amountDeal);
-            var numberBanknoteDeal = 0;
             for (var i = 0; i < cashbox.Count; i++)
             {
-                var allowableNumberBanknote =
-                    amountDeal !=
-                    cashbox[i]
-                        .Denomination //allowable number of banknotes to deal from cashbox of coffee machine (20% or one banknote)
-                        ? 20 * ((float)cashbox[i].CountBanknote / 100)
-                        : 1;
-
-                while (cashbox[i].Denomination <= amountDeal &&
-                       numberBanknoteDeal <= allowableNumberBanknote &&
-                       cashbox[i].CountBanknote > 0)
+                if (cashbox[i].Denomination > amountDeal)
                 {
-                    amountDeal -= cashbox[i].Denomination;
-                    cashbox[i].CountBanknote--;
-                    numberBanknoteDeal++;
+                    i = cashbox.IndexOf(cashbox.FirstOrDefault(x => x.Denomination <= amountDeal && x.CountBanknote > 0));
+                    if (i == -1)
+                        break;
                 }
 
-                if (numberBanknoteDeal != 0)
-                    deal = AddBanknoteInDeal(cashbox[i].Denomination, deal, numberBanknoteDeal);
-                numberBanknoteDeal = 0;
-                i = CheckDeal(i, cashbox, amountDeal) - 1; //next iteration of loop - i++
-                if (i == -2)
-                    break;
+                var allowableNumberBanknote =
+                    amountDeal > cashbox[i].Denomination //allowable number of banknotes to deal from cashbox of coffee machine (20% or one banknote)
+                        ? (float)(0.2 * cashbox[i].CountBanknote)
+                        : 1;
+
+                allowableNumberBanknote = allowableNumberBanknote == 0 ? 1 : allowableNumberBanknote;
+
+                var numberBanknoteDeal = amountDeal / cashbox[i].Denomination;
+                if (numberBanknoteDeal <= allowableNumberBanknote)
+                {
+                    amountDeal -= cashbox[i].Denomination * numberBanknoteDeal;
+                    cashbox[i].CountBanknote -= numberBanknoteDeal;
+                }
+                else
+                {
+                    numberBanknoteDeal = (int)allowableNumberBanknote;
+                    amountDeal -= cashbox[i].Denomination * numberBanknoteDeal;
+                    cashbox[i].CountBanknote -= numberBanknoteDeal;
+                }
+
+                deal = AddBanknoteInDeal(cashbox[i].Denomination, deal, numberBanknoteDeal);
             }
 
             if (amountDeal == 0)
