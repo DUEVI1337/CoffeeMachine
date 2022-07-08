@@ -124,7 +124,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             _db = new DataContext(dbOptions);
             _db.Database.EnsureDeleted();
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
-                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
+                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db), new UserRepository(_db));
             _coffeeService = new CoffeeService(uow, new BanknoteCashboxService(uow), new BalanceService(uow),
                 new PaymentService(uow), new IncomeService(uow));
         }

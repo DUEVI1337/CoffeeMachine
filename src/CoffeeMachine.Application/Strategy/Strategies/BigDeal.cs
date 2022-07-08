@@ -19,6 +19,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
+            var result = (deal, cashbox);
             cashbox.Reverse();
             foreach (var banknote in cashbox.Where(banknote =>
                          banknote.Denomination <= amountDeal && banknote.CountBanknote > 0))
@@ -37,10 +38,9 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 }
 
                 deal.Add(new BanknoteDto { Denomination = banknote.Denomination, CountBanknote = numberBanknoteDeal });
+                if (amountDeal == 0)
+                    return result;
             }
-
-            if (amountDeal == 0)
-                return (deal, cashbox);
 
             Log.Information($"Strategy {this} fail");
             return (null, null);

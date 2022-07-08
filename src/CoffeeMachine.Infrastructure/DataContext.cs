@@ -39,6 +39,11 @@ namespace CoffeeMachine.Infrastructure
         public DbSet<Payment> Payments { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<User> Users { get; set; }
+
+        /// <summary>
         /// init <see cref="Coffee"/>, <see cref="BanknoteCashbox"/> table in database 
         /// </summary>
         /// <param name="builder"></param>

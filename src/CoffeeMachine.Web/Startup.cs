@@ -74,7 +74,8 @@ namespace CoffeeMachine.Web
                 .AddScoped<IBalanceService, BalanceService>()
                 .AddScoped<IBanknoteCashboxService, BanknoteCashboxService>()
                 .AddScoped<IIncomeService, IncomeService>()
-                .AddScoped<IPaymentService, PaymentService>();
+                .AddScoped<IPaymentService, PaymentService>()
+                .AddScoped<IAccountService, AccountService>();
         }
     }
 }

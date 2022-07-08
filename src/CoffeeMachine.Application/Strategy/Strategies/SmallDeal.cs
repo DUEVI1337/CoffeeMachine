@@ -19,9 +19,10 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
+            var result = (deal, cashbox);
             for (var i = 0; i < cashbox.Count; i++)
             {
-                if (cashbox[i].Denomination > amountDeal)
+                if (cashbox[i].Denomination > amountDeal || cashbox[i].CountBanknote == 0)
                 {
                     i = cashbox.IndexOf(cashbox.FirstOrDefault(x => x.Denomination <= amountDeal && x.CountBanknote > 0));
                     if (i == -1)
@@ -30,7 +31,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
 
                 var allowableNumberBanknote =
                     amountDeal > cashbox[i].Denomination //allowable number of banknotes to deal from cashbox of coffee machine (20% or one banknote)
-                        ? (float)(0.2 * cashbox[i].CountBanknote)
+                        ? (float)(0.1 * cashbox[i].CountBanknote)
                         : 1;
 
                 allowableNumberBanknote = allowableNumberBanknote == 0 ? 1 : allowableNumberBanknote;
@@ -49,12 +50,12 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 }
 
                 deal = AddBanknoteInDeal(cashbox[i].Denomination, deal, numberBanknoteDeal);
+
+                if (amountDeal == 0)
+                    return result;
             }
 
-            if (amountDeal == 0)
-                return (deal, cashbox);
-
-            Log.Information($"Strategy {this} fail");
+            Log.Information($"Strategy '{this}' fail");
             return (null, null);
         }
     }

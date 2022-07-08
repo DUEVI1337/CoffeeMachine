@@ -19,6 +19,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
+            var result = (deal, cashbox);
             cashbox.Reverse();
             for (var i = 0; i < cashbox.Count; i++)
             {
@@ -28,10 +29,10 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 i = GetBanknoteIndex(i, cashbox, amountDeal) - 1; //'-1' - next iteration of loop i + 1
                 if (i == -2)
                     break;
-            }
 
-            if (amountDeal == 0)
-                return (deal, cashbox);
+                if (amountDeal == 0)
+                    return result;
+            }
 
             Log.Information($"Strategy {this} fail");
             return (null, null);

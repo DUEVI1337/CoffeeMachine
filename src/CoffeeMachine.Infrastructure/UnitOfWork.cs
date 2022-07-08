@@ -14,7 +14,8 @@ namespace CoffeeMachine.Infrastructure
         private readonly DataContext _db;
 
         public UnitOfWork(DataContext db, CoffeeRepository coffeeRepo, BalanceRepository balanceRepo,
-            BanknoteCashboxRepository banknoteCashboxRepo, PaymentRepository paymentRepo, IncomeRepository incomeRepo)
+            BanknoteCashboxRepository banknoteCashboxRepo, PaymentRepository paymentRepo, IncomeRepository incomeRepo,
+            UserRepository userRepo)
         {
             _db = db;
             CoffeeRepo = coffeeRepo;
@@ -22,6 +23,7 @@ namespace CoffeeMachine.Infrastructure
             BanknoteCashboxRepo = banknoteCashboxRepo;
             PaymentRepo = paymentRepo;
             IncomeRepo = incomeRepo;
+            UserRepo = userRepo;
         }
 
         /// <summary>
@@ -48,6 +50,11 @@ namespace CoffeeMachine.Infrastructure
         /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
         /// </summary>
         public IRepository<Payment> PaymentRepo { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IRepository<User> UserRepo { get; set; }
 
         /// <summary>
         /// save changes in database after something action with entity in database

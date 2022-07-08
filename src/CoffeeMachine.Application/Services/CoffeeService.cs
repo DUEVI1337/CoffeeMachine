@@ -44,15 +44,16 @@ namespace CoffeeMachine.Application.Services
             var coffee = await GetCoffeeDtoByIdAsync(idCoffee);
             var amountClientMoney = GetAmountClientMoney(clientMoney);
             var cashbox = await _banknoteCashboxService.GetCashboxAsync();
-            var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice);
+            var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice); //money that need give client
 
             if (!СheckPossibleGiveDeal(amountDeal, cashbox))
                 return null;
 
             clientMoney.ForEach(x =>
-                cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote += x.CountBanknote);
-            var (deal, updatedCashbox) = ExecuteStrategy(typeDeal, cashbox, amountDeal);
-            await AddChangesInDbAsync(coffee, updatedCashbox, amountClientMoney);
+                cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote += x.CountBanknote); //add client money in cashbox of coffee machine
+
+            var (deal, updatedCashbox) = ExecuteStrategyDeal(typeDeal, cashbox, amountDeal);
+            await SaveChangesInDbAsync(coffee, updatedCashbox, amountClientMoney);
             return deal;
         }
 
@@ -78,7 +79,7 @@ namespace CoffeeMachine.Application.Services
         /// <param name="updatedCashbox">updated cashbox of coffee machine</param>
         /// <param name="clientMoney">money of client</param>
         /// <returns></returns>
-        private async Task AddChangesInDbAsync(CoffeeDto coffee, List<BanknoteCashbox> updatedCashbox, int clientMoney)
+        private async Task SaveChangesInDbAsync(CoffeeDto coffee, List<BanknoteCashbox> updatedCashbox, int clientMoney)
         {
             var amountDeal = _getAmountDeal(clientMoney, coffee.CoffeePrice);
 
@@ -88,7 +89,7 @@ namespace CoffeeMachine.Application.Services
             await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
             await _uow.SaveChangesAsync();
             Log.Information("New data updated in database");
-        }
+        } // вынести например в uow
 
         /// <summary>
         /// Executing strategy that give deal
@@ -98,7 +99,7 @@ namespace CoffeeMachine.Application.Services
         /// <param name="amountDeal">amount money that need give client</param>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/> and <see cref="List{T}"/> T2 <see cref="BanknoteCashbox"/> (Tuple)</returns>
         /// <exception cref="NullCashboxException">impossible give deal</exception>
-        private (List<BanknoteDto>, List<BanknoteCashbox>) ExecuteStrategy(TypeDeal typeDeal,
+        private (List<BanknoteDto>, List<BanknoteCashbox>) ExecuteStrategyDeal(TypeDeal typeDeal,
             List<BanknoteCashbox> cashbox, int amountDeal)
         {
             _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
@@ -146,10 +147,10 @@ namespace CoffeeMachine.Application.Services
                 BanknoteId = banknote.BanknoteId,
                 CountBanknote = banknote.CountBanknote,
                 Denomination = banknote.Denomination
-            }).Where(x => x.Denomination >= amountDeal && x.CountBanknote > 0).ToList();
+            }).Where(x => x.Denomination <= amountDeal && x.CountBanknote > 0).ToList();
             copyCashbox.Sort();
             return copyCashbox;
-        }
+        } // вынести в cashboxService
 
     /// <summary>
     /// Checking possible give deal to client
