@@ -2,8 +2,12 @@
 
 namespace CoffeeMachine.Application.Dto
 {
+    /// <summary>
+    /// To register new user
+    /// </summary>
     public class RegisterDto
     {
+
         [Required(ErrorMessage = "Not empty")]
         public string Username { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
@@ -25,6 +26,7 @@ namespace CoffeeMachine.Application.Services.Interfaces
         /// </summary>
         /// <param name="id">id coffee</param>
         /// <returns><see cref="CoffeeDto"/> or null</returns>
+        /// <exception cref="NullReferenceException">Not found coffee</exception>
         Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id);
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace CoffeeMachine.Infrastructure
         public DbSet<Payment> Payments { get; set; }
 
         /// <summary>
-        /// 
+        /// <see cref="User"/> table in database
         /// </summary>
         public DbSet<User> Users { get; set; }
 

@@ -57,11 +57,6 @@ namespace CoffeeMachine.Web
                 var logMessage = "Invalid username or password";
                 await CreateResponseAsync(signInEx, context, logMessage, (int)HttpStatusCode.BadRequest);
             }
-            catch (PasswordFailException passwordEx)
-            {
-                var logMessage = "Invalid password";
-                await CreateResponseAsync(passwordEx, context, logMessage, (int)HttpStatusCode.BadRequest);
-            }
             catch (UsernameNotUniqueException usernameEx)
             {
                 var logMessage = "Not unique 'Username'";

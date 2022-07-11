@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -7,12 +8,16 @@ using CoffeeMachine.Application.Exceptions.CustomExceptions;
 using CoffeeMachine.Application.Services;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
-
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace CoffeeMachine.Web.Controllers
 {
+    /// <summary>
+    /// work with user account
+    /// </summary>
     [Route("account/v1")]
     [ApiController]
     [AllowAnonymous]
@@ -26,35 +31,26 @@ namespace CoffeeMachine.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// register new user into app
         /// </summary>
-        /// <param name="registerDto"></param>
-        /// <returns></returns>
+        /// <param name="registerDto">data for register</param>
         [HttpPost]
         [Route("Register")]
         public async Task RegisterAccount([FromBody] RegisterDto registerDto)
         {
-            if (ModelState.IsValid)
-            {
-                await _accountService.RegisterAccountAsync(registerDto);
-            }
+            await _accountService.RegisterAccountAsync(registerDto);
         }
 
         /// <summary>
-        /// 
+        /// authorize user into app
         /// </summary>
-        /// <param name="signInDto"></param>
-        /// <returns></returns>
+        /// <param name="signInDto">data for authorize</param>
+        /// <returns>jwt-token</returns>
         [HttpPost]
         [Route("SignIn")]
         public async Task<string> SignInAccount([FromBody] SignInDto signInDto)
         {
-            if (ModelState.IsValid)
-            {
-                return await _accountService.SignInAccountAsync(signInDto);
-            }
-
-            return null;
+            return await _accountService.SignInAccountAsync(signInDto);
         }
     }
 }

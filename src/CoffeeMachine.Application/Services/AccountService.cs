@@ -24,18 +24,8 @@ namespace CoffeeMachine.Application.Services
             _jwtManager = jwtManager;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="registerDto"></param>
-        /// <returns></returns>
-        /// <exception cref="PasswordFailException"></exception>
-        /// <exception cref="UsernameNotUniqueException"></exception>
         public async Task RegisterAccountAsync(RegisterDto registerDto)
         {
-            if (string.IsNullOrWhiteSpace(registerDto.Password))
-                throw new PasswordFailException();
-
             if (!await CheckUsernameUniqueAsync(registerDto.Username))
                 throw new UsernameNotUniqueException();
 
@@ -47,15 +37,8 @@ namespace CoffeeMachine.Application.Services
             };
             _uow.UserRepo.Add(user);
             await _uow.SaveChangesAsync();
-
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="signInDto"></param>
-        /// <returns></returns>
-        /// <exception cref="SignInFailException"></exception>
         public async Task<string> SignInAccountAsync(SignInDto signInDto)
         {
             User user = await _uow.UserRepo.FindAsync(x=>x.Username == signInDto.Username);
@@ -65,15 +48,14 @@ namespace CoffeeMachine.Application.Services
             var result = PasswordProtect.CheckPassword(user.Password, signInDto.Password);
             if (!result)
                 throw new SignInFailException();
-
             return _jwtManager.GenerateJwtToken(user);
         }
 
         /// <summary>
-        /// 
+        /// Сhecks the user name in the database for uniqueness
         /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
+        /// <param name="username">username of user</param>
+        /// <returns>true or false</returns>
         private async Task<bool> CheckUsernameUniqueAsync(string username)
         {
             User user = await _uow.UserRepo.FindAsync(x => x.Username == username);

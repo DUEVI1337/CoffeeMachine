@@ -13,8 +13,16 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CoffeeMachine.Application.Jwt
 {
+    /// <summary>
+    /// Work with JWT-tokens
+    /// </summary>
     public class JwtManager
     {
+        /// <summary>
+        /// Generate jwt-token for user
+        /// </summary>
+        /// <param name="user">user for which you want create jwt-token</param>
+        /// <returns>jwt-token</returns>
         public string GenerateJwtToken(User user)
         {
             var claims = GetClaims(user);
@@ -28,6 +36,11 @@ namespace CoffeeMachine.Application.Jwt
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        /// Gets claims for jwt-token
+        /// </summary>
+        /// <param name="user">user for which you want to create claims</param>
+        /// <returns><see cref="List{T}"/> where T <see cref="Claim"/></returns>
         private List<Claim> GetClaims(User user)
         {
             return new List<Claim>

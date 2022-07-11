@@ -61,15 +61,38 @@ namespace CoffeeMachine.Web
                 var xmlFileNameDomain = "CoffeeMachine.Domain.xml";
                 opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameWeb));
                 opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameDomain));
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Insert JWT-token into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
             services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
             });
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opt =>
                 {
-                    opt.RequireHttpsMetadata = true;
                     opt.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidIssuer = JwtOptions.ISSUER,

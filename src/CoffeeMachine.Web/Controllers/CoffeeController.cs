@@ -16,6 +16,7 @@ namespace CoffeeMachine.Web.Controllers
     /// </summary>
     [Route("coffee/v1")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CoffeeController : Controller
     {
         private readonly ICoffeeService _coffeeService;
@@ -34,7 +35,6 @@ namespace CoffeeMachine.Web.Controllers
         /// <response code="404">not found coffee</response>
         [HttpPost]
         [Route("BuyCoffee")]
-        [Authorize()]
         public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
         {
             return await _coffeeService.BuyCoffeeAsync(order.CoffeeId, order.Banknotes, (TypeDeal)order.TypeDeal);

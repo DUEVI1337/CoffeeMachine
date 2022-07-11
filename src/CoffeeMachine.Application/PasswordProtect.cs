@@ -7,17 +7,20 @@ using System.Threading.Tasks;
 
 namespace CoffeeMachine.Application
 {
+    /// <summary>
+    /// For work with password of user
+    /// </summary>
     public class PasswordProtect
     {
-        private const int ITERATIONS = 1000;
-        private const int SALT_SIZE = 8;
-        private const int KEY_SIZE = 16;
-        private static readonly HashAlgorithmName _algorithm = HashAlgorithmName.SHA256;
+        private const int ITERATIONS = 1000; //number iterations for algorithm 'RFC 2898'
+        private const int SALT_SIZE = 8; //salt size of password hash
+        private const int KEY_SIZE = 16; //key size of password hash 
+        private static readonly HashAlgorithmName _algorithm = HashAlgorithmName.SHA256; //hashing algorithm
 
         /// <summary>
-        /// 
+        /// Create password hash
         /// </summary>
-        /// <param name="password"></param>
+        /// <param name="password">user password</param>
         /// <returns></returns>
         public static string GetPasswordProtect(string password)
         {
@@ -33,10 +36,10 @@ namespace CoffeeMachine.Application
         }
 
         /// <summary>
-        /// 
+        /// Checking password hash from db and password from dto
         /// </summary>
-        /// <param name="passwordHash"></param>
-        /// <param name="password"></param>
+        /// <param name="passwordHash">user password hash from db</param>
+        /// <param name="password">password from dto</param>
         /// <returns></returns>
         public static bool CheckPassword(string passwordHash, string password)
         {

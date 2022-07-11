@@ -8,19 +8,15 @@ using System.Threading.Tasks;
 namespace CoffeeMachine.Application.Dto
 {
     /// <summary>
-    /// 
+    /// For login user
     /// </summary>
     public class SignInDto
     {
-        /// <summary>
-        /// 
-        /// </summary>
+
         [Required(ErrorMessage = "Not empty")]
         public string Username { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
+
         [Required(ErrorMessage = "Not empty")]
         public string Password { get; set; }
     }

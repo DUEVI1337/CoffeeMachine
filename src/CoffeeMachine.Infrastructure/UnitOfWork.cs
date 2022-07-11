@@ -32,7 +32,7 @@ namespace CoffeeMachine.Infrastructure
         public IRepository<Balance> BalanceRepo { get; set; }
 
         /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Balance"/> in database)
+        /// property for DI (ability use basic methods for work with entity <see cref="BanknoteCashbox"/> in database)
         /// </summary>
         public IRepository<BanknoteCashbox> BanknoteCashboxRepo { get; set; }
 
@@ -42,17 +42,17 @@ namespace CoffeeMachine.Infrastructure
         public IRepository<Coffee> CoffeeRepo { get; set; }
 
         /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// property for DI (ability use basic methods for work with entity <see cref="Income"/> in database)
         /// </summary>
         public IRepository<Income> IncomeRepo { get; set; }
 
         /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// property for DI (ability use basic methods for work with entity <see cref="Payment"/> in database)
         /// </summary>
         public IRepository<Payment> PaymentRepo { get; set; }
 
         /// <summary>
-        /// 
+        /// property for DI (ability use basic methods for work with entity <see cref="User"/> in database)
         /// </summary>
         public IRepository<User> UserRepo { get; set; }
 
