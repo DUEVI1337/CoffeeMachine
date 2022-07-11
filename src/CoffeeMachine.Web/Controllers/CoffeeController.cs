@@ -5,6 +5,8 @@ using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeMachine.Web.Controllers
@@ -32,6 +34,7 @@ namespace CoffeeMachine.Web.Controllers
         /// <response code="404">not found coffee</response>
         [HttpPost]
         [Route("BuyCoffee")]
+        [Authorize()]
         public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
         {
             return await _coffeeService.BuyCoffeeAsync(order.CoffeeId, order.Banknotes, (TypeDeal)order.TypeDeal);

@@ -60,6 +60,7 @@ namespace CoffeeMachine.Infrastructure
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 1000, CountBanknote = 15 },
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 10 },
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 5 });
+            builder.Entity<User>().HasIndex(x => x.Username).IsUnique();
         }
     }
 }

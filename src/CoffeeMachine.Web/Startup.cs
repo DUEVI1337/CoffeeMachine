@@ -1,18 +1,20 @@
 using System;
 using System.IO;
 using System.Reflection;
-
+using CoffeeMachine.Application.Jwt;
 using CoffeeMachine.Application.Services;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace CoffeeMachine.Web
@@ -41,6 +43,7 @@ namespace CoffeeMachine.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
@@ -63,19 +66,38 @@ namespace CoffeeMachine.Web
             {
                 opt.UseNpgsql(Configuration.GetConnectionString("PgsqlConStr"));
             });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(opt =>
+                {
+                    opt.RequireHttpsMetadata = true;
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = JwtOptions.ISSUER,
+                        ValidateIssuer = true,
+                        
+                        ValidateLifetime = true,
+
+                        ValidateAudience = false,
+
+                        IssuerSigningKey = JwtOptions.GetSuSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
             services.AddTransient<GlobalExceptionHandler>()
                 .AddScoped<CoffeeRepository>()
                 .AddScoped<BalanceRepository>()
                 .AddScoped<BanknoteCashboxRepository>()
                 .AddScoped<PaymentRepository>()
                 .AddScoped<IncomeRepository>()
+                .AddScoped<UserRepository>()
                 .AddScoped<UnitOfWork>()
                 .AddScoped<ICoffeeService, CoffeeService>()
                 .AddScoped<IBalanceService, BalanceService>()
                 .AddScoped<IBanknoteCashboxService, BanknoteCashboxService>()
                 .AddScoped<IIncomeService, IncomeService>()
                 .AddScoped<IPaymentService, PaymentService>()
-                .AddScoped<IAccountService, AccountService>();
+                .AddScoped<IAccountService, AccountService>()
+                .AddScoped<JwtManager>();
         }
     }
 }

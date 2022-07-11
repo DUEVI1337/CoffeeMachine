@@ -23,7 +23,5 @@ namespace CoffeeMachine.Application.Exceptions.CustomExceptions
             : base(message, inner)
         {
         }
-
-        public List<BanknoteDto> ClientMoney { get; set; }
     }
 }

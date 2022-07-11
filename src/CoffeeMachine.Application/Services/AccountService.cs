@@ -5,6 +5,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Exceptions.CustomExceptions;
+using CoffeeMachine.Application.Jwt;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
@@ -14,71 +16,68 @@ namespace CoffeeMachine.Application.Services
     public class AccountService : IAccountService
     {
         private readonly UnitOfWork _uow;
+        private readonly JwtManager _jwtManager;
 
-        public AccountService(UnitOfWork uow)
+        public AccountService(UnitOfWork uow, JwtManager jwtManager)
         {
             _uow = uow;
+            _jwtManager = jwtManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="registerDto"></param>
+        /// <returns></returns>
+        /// <exception cref="PasswordFailException"></exception>
+        /// <exception cref="UsernameNotUniqueException"></exception>
         public async Task RegisterAccountAsync(RegisterDto registerDto)
         {
             if (string.IsNullOrWhiteSpace(registerDto.Password))
-                throw new Exception();
+                throw new PasswordFailException();
 
-            User user = new() { IdUser = Guid.NewGuid(), Username = registerDto.Username };
-            user.Password = GetProtectPassword(registerDto.Password);
-            var result = ChekPassword(user.Password, "string");
+            if (!await CheckUsernameUniqueAsync(registerDto.Username))
+                throw new UsernameNotUniqueException();
+
+            User user = new()
+            {
+                IdUser = Guid.NewGuid(),
+                Username = registerDto.Username,
+                Password = PasswordProtect.GetPasswordProtect(registerDto.Password)
+            };
             _uow.UserRepo.Add(user);
             await _uow.SaveChangesAsync();
+
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="password"></param>
+        /// <param name="signInDto"></param>
         /// <returns></returns>
-        private string GetProtectPassword(string password)
+        /// <exception cref="SignInFailException"></exception>
+        public async Task<string> SignInAccountAsync(SignInDto signInDto)
         {
-            const int ITERATIONS = 1000;
-            const int SALT_SIZE = 8;
-            const int KEY_SIZE = 16;
-            HashAlgorithmName algorithm = HashAlgorithmName.SHA256;
+            User user = await _uow.UserRepo.FindAsync(x=>x.Username == signInDto.Username);
+            if (user == null)
+                throw new SignInFailException();
 
-            using var encrypt = new Rfc2898DeriveBytes(
-                password,
-                SALT_SIZE,
-                ITERATIONS,
-                algorithm);
+            var result = PasswordProtect.CheckPassword(user.Password, signInDto.Password);
+            if (!result)
+                throw new SignInFailException();
 
-            var key = Convert.ToBase64String(encrypt.GetBytes(KEY_SIZE));
-            var salt = Convert.ToBase64String(encrypt.Salt);
-            return $"{ITERATIONS}+{salt}+{key}";
+            return _jwtManager.GenerateJwtToken(user);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="passwordHash"></param>
-        /// <param name="password"></param>
+        /// <param name="username"></param>
         /// <returns></returns>
-        private bool ChekPassword(string passwordHash, string password)
+        private async Task<bool> CheckUsernameUniqueAsync(string username)
         {
-            var result = false;
-            const int ITERATIONS = 1000;
-            const int SALT_SIZE = 8;
-            const int KEY_SIZE = 16;
-            HashAlgorithmName algorithm = HashAlgorithmName.SHA256;
-
-            using var encrypt = new Rfc2898DeriveBytes(
-                password,
-                SALT_SIZE,
-                ITERATIONS,
-                algorithm);
-
-            if(passwordHash == password)
-                return true;
-
-            return false;
+            User user = await _uow.UserRepo.FindAsync(x => x.Username == username);
+            return user == null;
         }
     }
 }
