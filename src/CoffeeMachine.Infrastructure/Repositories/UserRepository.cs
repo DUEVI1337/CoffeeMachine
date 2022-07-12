@@ -1,9 +1,4 @@
-﻿
-using System.Threading.Tasks;
-
-using CoffeeMachine.Domain.Entities;
-
-using Microsoft.EntityFrameworkCore;
+﻿using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Infrastructure.Repositories
 {

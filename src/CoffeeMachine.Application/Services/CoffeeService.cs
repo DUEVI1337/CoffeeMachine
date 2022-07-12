@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Exceptions.CustomExceptions;
 using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Application.Strategy;
 using CoffeeMachine.Application.Strategy.Contexts;
-using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
@@ -38,7 +38,7 @@ namespace CoffeeMachine.Application.Services
             _balanceService = balanceService;
         }
 
-        public async Task<List<BanknoteDto>> BuyCoffeeAsync(string  idCoffee, List<BanknoteDto> clientMoney,
+        public async Task<List<BanknoteDto>> BuyCoffeeAsync(string idCoffee, List<BanknoteDto> clientMoney,
             TypeDeal typeDeal)
         {
             var coffee = await GetCoffeeDtoByIdAsync(idCoffee);
@@ -50,7 +50,8 @@ namespace CoffeeMachine.Application.Services
                 return null;
 
             clientMoney.ForEach(x =>
-                cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote += x.CountBanknote); //add client money in cashbox of coffee machine
+                cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote +=
+                    x.CountBanknote); //add client money in cashbox of coffee machine
 
             var (deal, updatedCashbox) = ExecuteStrategyDeal(typeDeal, cashbox, amountDeal);
             await SaveChangesInDbAsync(coffee, updatedCashbox, amountClientMoney);
@@ -71,25 +72,6 @@ namespace CoffeeMachine.Application.Services
             var coffees = await _uow.CoffeeRepo.GetAllAsync();
             return coffees.Select(x => Mapper.MapToCoffeeDto(x)).ToList();
         }
-
-        /// <summary>
-        /// Add and save changes after buying coffee in database
-        /// </summary>
-        /// <param name="coffee">coffee from order of client</param>
-        /// <param name="updatedCashbox">updated cashbox of coffee machine</param>
-        /// <param name="clientMoney">money of client</param>
-        /// <returns></returns>
-        private async Task SaveChangesInDbAsync(CoffeeDto coffee, List<BanknoteCashbox> updatedCashbox, int clientMoney)
-        {
-            var amountDeal = _getAmountDeal(clientMoney, coffee.CoffeePrice);
-
-            await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
-            _paymentService.AddPayment(clientMoney, coffee.CoffeeId, amountDeal);
-            await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
-            await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
-            await _uow.SaveChangesAsync();
-            Log.Information("New data updated in database");
-        } // вынести например в uow
 
         /// <summary>
         /// Executing strategy that give deal
@@ -152,15 +134,34 @@ namespace CoffeeMachine.Application.Services
             return copyCashbox;
         } // вынести в cashboxService
 
-    /// <summary>
-    /// Checking possible give deal to client
-    /// </summary>
-    /// <param name="amountDeal">amount money that need give client</param>
-    /// <param name="cashbox">cashbox of coffee machine</param>
-    /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
-    /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
-    /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
-    private bool СheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
+        /// <summary>
+        /// Add and save changes after buying coffee in database
+        /// </summary>
+        /// <param name="coffee">coffee from order of client</param>
+        /// <param name="updatedCashbox">updated cashbox of coffee machine</param>
+        /// <param name="clientMoney">money of client</param>
+        /// <returns></returns>
+        private async Task SaveChangesInDbAsync(CoffeeDto coffee, List<BanknoteCashbox> updatedCashbox, int clientMoney)
+        {
+            var amountDeal = _getAmountDeal(clientMoney, coffee.CoffeePrice);
+
+            await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
+            _paymentService.AddPayment(clientMoney, coffee.CoffeeId, amountDeal);
+            await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
+            await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
+            await _uow.SaveChangesAsync();
+            Log.Information("New data updated in database");
+        } // вынести например в uow
+
+        /// <summary>
+        /// Checking possible give deal to client
+        /// </summary>
+        /// <param name="amountDeal">amount money that need give client</param>
+        /// <param name="cashbox">cashbox of coffee machine</param>
+        /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
+        /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
+        /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
+        private bool СheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
         {
             if (amountDeal < 0)
                 throw new NotEnoughMoneyException();

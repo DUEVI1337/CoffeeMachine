@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Entities;
 
 using Serilog;

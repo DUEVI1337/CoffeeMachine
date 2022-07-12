@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Dto;
-using CoffeeMachine.Application.Exceptions.CustomExceptions;
-using CoffeeMachine.Application.Services;
 using CoffeeMachine.Application.Services.Interfaces;
-using CoffeeMachine.Domain.Entities;
-using Microsoft.AspNetCore.Authentication;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace CoffeeMachine.Web.Controllers
 {

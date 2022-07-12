@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using CoffeeMachine.Application.Dto;
 
 namespace CoffeeMachine.Application.Exceptions.CustomExceptions
 {

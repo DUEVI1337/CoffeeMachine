@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+
 using CoffeeMachine.Application.Jwt;
 using CoffeeMachine.Application.Services;
 using CoffeeMachine.Application.Services.Interfaces;
@@ -97,7 +98,7 @@ namespace CoffeeMachine.Web
                     {
                         ValidIssuer = JwtOptions.ISSUER,
                         ValidateIssuer = true,
-                        
+
                         ValidateLifetime = true,
 
                         ValidateAudience = false,

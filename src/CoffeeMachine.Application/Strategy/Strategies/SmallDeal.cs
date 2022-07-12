@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Entities;
 
 using Serilog;
@@ -24,13 +23,16 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             {
                 if (cashbox[i].Denomination > amountDeal || cashbox[i].CountBanknote == 0)
                 {
-                    i = cashbox.IndexOf(cashbox.FirstOrDefault(x => x.Denomination <= amountDeal && x.CountBanknote > 0));
+                    i = cashbox.IndexOf(
+                        cashbox.FirstOrDefault(x => x.Denomination <= amountDeal && x.CountBanknote > 0));
                     if (i == -1)
                         break;
                 }
 
                 var allowableNumberBanknote =
-                    amountDeal > cashbox[i].Denomination //allowable number of banknotes to deal from cashbox of coffee machine (20% or one banknote)
+                    amountDeal >
+                    cashbox[i]
+                        .Denomination //allowable number of banknotes to deal from cashbox of coffee machine (20% or one banknote)
                         ? (float)(0.1 * cashbox[i].CountBanknote)
                         : 1;
 
@@ -53,6 +55,9 @@ namespace CoffeeMachine.Application.Strategy.Strategies
 
                 if (amountDeal == 0)
                     return result;
+
+                if (i == cashbox.Count - 1)
+                    i -= 1;
             }
 
             Log.Information($"Strategy '{this}' fail");

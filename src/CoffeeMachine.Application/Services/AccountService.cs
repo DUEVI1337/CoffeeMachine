@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+
 using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Exceptions.CustomExceptions;
 using CoffeeMachine.Application.Jwt;
@@ -11,12 +8,13 @@ using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
+
 namespace CoffeeMachine.Application.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UnitOfWork _uow;
         private readonly JwtManager _jwtManager;
+        private readonly UnitOfWork _uow;
 
         public AccountService(UnitOfWork uow, JwtManager jwtManager)
         {
@@ -41,7 +39,7 @@ namespace CoffeeMachine.Application.Services
 
         public async Task<string> SignInAccountAsync(SignInDto signInDto)
         {
-            User user = await _uow.UserRepo.FindAsync(x=>x.Username == signInDto.Username);
+            var user = await _uow.UserRepo.FindAsync(x => x.Username == signInDto.Username);
             if (user == null)
                 throw new SignInFailException();
 
@@ -52,13 +50,13 @@ namespace CoffeeMachine.Application.Services
         }
 
         /// <summary>
-        /// Сhecks the user name in the database for uniqueness
+        /// Checks the user name in the database for uniqueness
         /// </summary>
         /// <param name="username">username of user</param>
         /// <returns>true or false</returns>
         private async Task<bool> CheckUsernameUniqueAsync(string username)
         {
-            User user = await _uow.UserRepo.FindAsync(x => x.Username == username);
+            var user = await _uow.UserRepo.FindAsync(x => x.Username == username);
             return user == null;
         }
     }

@@ -7,10 +7,6 @@ namespace CoffeeMachine.Application.Dto
     /// </summary>
     public class RegisterDto
     {
-
-        [Required(ErrorMessage = "Not empty")]
-        public string Username { get; set; }
-
         [Required(ErrorMessage = "Not empty")]
         [MinLength(6, ErrorMessage = "Minimum length of password 6 characters")]
         [MaxLength(30, ErrorMessage = "Maximum length password 30 characters")]
@@ -19,5 +15,8 @@ namespace CoffeeMachine.Application.Dto
         [Required(ErrorMessage = "Not empty")]
         [Compare("Password", ErrorMessage = "Passwords must match ")]
         public string PasswordConfirm { get; set; }
+
+        [Required(ErrorMessage = "Not empty")]
+        public string Username { get; set; }
     }
 }

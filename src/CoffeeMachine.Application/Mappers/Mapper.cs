@@ -31,6 +31,5 @@ namespace CoffeeMachine.Application.Mappers
             return new()
                 { CoffeeId = coffee.CoffeeId.ToString(), CoffeeName = coffee.Name, CoffeePrice = coffee.Price };
         }
-
     }
 }

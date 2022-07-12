@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-using CoffeeMachine.Application.Exceptions.CustomExceptions;
-
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Exceptions.CustomExceptions;
 
 namespace CoffeeMachine.Application.Services.Interfaces
 {

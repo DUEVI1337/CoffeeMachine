@@ -66,7 +66,8 @@ namespace CoffeeMachine.UnitTests.ServicesTests
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
             _db = new DataContext(dbOptions);
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
-                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db), new UserRepository(_db));
+                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db),
+                new UserRepository(_db));
             _incomeService = new IncomeService(uow);
         }
     }

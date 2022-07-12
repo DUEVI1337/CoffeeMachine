@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;

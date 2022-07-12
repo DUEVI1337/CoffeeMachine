@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -33,21 +32,21 @@ namespace CoffeeMachine.Infrastructure.Repositories
         }
 
         /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> expression)
-        {
-            return await _db.Set<TEntity>().FirstOrDefaultAsync(expression);
-        }
-
-        /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="entity"><inheritdoc/></param>
         public void Delete(TEntity entity)
         {
             _db.Set<TEntity>().Remove(entity);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> expression)
+        {
+            return await _db.Set<TEntity>().FirstOrDefaultAsync(expression);
         }
 
         /// <summary>
