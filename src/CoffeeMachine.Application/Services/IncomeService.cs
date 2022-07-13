@@ -19,6 +19,7 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
+        ///<inheritdoc/>
         public async Task AddIncomeAsync(int coffeePrice)
         {
             var income = await _uow.IncomeRepo.GetAllAsync();

@@ -7,19 +7,23 @@ using CoffeeMachine.Domain.Entities;
 
 using Serilog;
 
+
 namespace CoffeeMachine.Application.Strategy.Strategies
 {
     /// <summary>
-    /// strategy that calc deal of big denomination banknotes
+    /// strategy that calc deal of big denomination banknotes.
     /// </summary>
     public class BigDeal : IDeal
     {
-        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
+        ///<inheritdoc/>
+        public (List<BanknoteDto>, List<BanknoteCashbox>) GetDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
             var result = (deal, cashbox);
+            cashbox.Sort();
             cashbox.Reverse();
+
             foreach (var banknote in cashbox.Where(banknote =>
                          banknote.Denomination <= amountDeal && banknote.CountBanknote > 0))
             {
@@ -40,6 +44,9 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 if (amountDeal == 0)
                     return result;
             }
+
+            if (amountDeal == 0)
+                return result;
 
             Log.Information($"Strategy {this} fail");
             return (null, null);

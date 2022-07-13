@@ -9,6 +9,7 @@ using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Application.Strategy;
 using CoffeeMachine.Application.Strategy.Contexts;
+using CoffeeMachine.Application.Strategy.Strategies;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
@@ -20,30 +21,30 @@ namespace CoffeeMachine.Application.Services
 
     {
         private readonly IBalanceService _balanceService;
-        private readonly IBanknoteCashboxService _banknoteCashboxService;
-
+        private readonly IBanknoteCashboxService _cashboxService;
         private readonly Func<int, int, int> _getAmountDeal = (clientMoney, coffeePrice) => clientMoney - coffeePrice;
         private readonly IIncomeService _incomeService;
         private readonly IPaymentService _paymentService;
         private readonly UnitOfWork _uow;
         private DealContext _dealContext;
 
-        public CoffeeService(UnitOfWork uow, IBanknoteCashboxService banknoteCashboxService,
+        public CoffeeService(UnitOfWork uow, IBanknoteCashboxService cashboxService,
             IBalanceService balanceService, IPaymentService paymentService, IIncomeService incomeService)
         {
             _uow = uow;
-            _banknoteCashboxService = banknoteCashboxService;
+            _cashboxService = cashboxService;
             _incomeService = incomeService;
             _paymentService = paymentService;
             _balanceService = balanceService;
         }
 
+        ///<inheritdoc/>
         public async Task<List<BanknoteDto>> BuyCoffeeAsync(string idCoffee, List<BanknoteDto> clientMoney,
             TypeDeal typeDeal)
         {
             var coffee = await GetCoffeeDtoByIdAsync(idCoffee);
             var amountClientMoney = GetAmountClientMoney(clientMoney);
-            var cashbox = await _banknoteCashboxService.GetCashboxAsync();
+            var cashbox = await _cashboxService.GetCashboxAsync();
             var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice); //money that need give client
 
             if (!СheckPossibleGiveDeal(amountDeal, cashbox))
@@ -58,6 +59,7 @@ namespace CoffeeMachine.Application.Services
             return deal;
         }
 
+        ///<inheritdoc/>
         public async Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id)
         {
             if (!Guid.TryParse(id, out var idGuid))
@@ -67,6 +69,7 @@ namespace CoffeeMachine.Application.Services
             return coffee == null ? throw new NullReferenceException() : Mapper.MapToCoffeeDto(coffee);
         }
 
+        ///<inheritdoc/>
         public async Task<List<CoffeeDto>> GetListCoffeeDtoAsync()
         {
             var coffees = await _uow.CoffeeRepo.GetAllAsync();
@@ -85,17 +88,16 @@ namespace CoffeeMachine.Application.Services
             List<BanknoteCashbox> cashbox, int amountDeal)
         {
             _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
-            var (deal, updatedCashbox) = _dealContext.GiveDeal(GetCashboxSort(cashbox, amountDeal), amountDeal);
-            while (deal == null)
-            {
-                var newStrategy = DealFactory.GetNextDealStrategy(typeDeal.ToString());
-                if (newStrategy == null)
-                    throw new NullCashboxException();
+            var (deal, updatedCashbox) =
+                _dealContext.GiveDeal(_cashboxService.GetCopyCashbox(cashbox, amountDeal), amountDeal);
+            if (deal != null)
+                return (deal, updatedCashbox);
 
-                typeDeal = Enum.Parse<TypeDeal>(newStrategy.Value.Key);
-                _dealContext = new DealContext(newStrategy.Value.Value);
-                (deal, updatedCashbox) = _dealContext.GiveDeal(GetCashboxSort(cashbox, amountDeal), amountDeal);
-            }
+            _dealContext = new DealContext(new DynamicDeal());
+            (deal, updatedCashbox) =
+                _dealContext.GiveDeal(_cashboxService.GetCopyCashbox(cashbox, amountDeal), amountDeal);
+            if (deal == null)
+                throw new NullCashboxException();
 
             return (deal, updatedCashbox);
         }
@@ -118,23 +120,6 @@ namespace CoffeeMachine.Application.Services
         }
 
         /// <summary>
-        /// Copying <see cref="List{T}"/> to new <see cref="List{T}"/> for keep to original list
-        /// </summary>
-        /// <param name="cashbox">cashbox of coffee machine</param>
-        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteCashbox"/></returns>
-        private List<BanknoteCashbox> GetCashboxSort(List<BanknoteCashbox> cashbox, int amountDeal)
-        {
-            var copyCashbox = cashbox.Select(banknote => new BanknoteCashbox
-            {
-                BanknoteId = banknote.BanknoteId,
-                CountBanknote = banknote.CountBanknote,
-                Denomination = banknote.Denomination
-            }).Where(x => x.Denomination <= amountDeal && x.CountBanknote > 0).ToList();
-            copyCashbox.Sort();
-            return copyCashbox;
-        } // вынести в cashboxService
-
-        /// <summary>
         /// Add and save changes after buying coffee in database
         /// </summary>
         /// <param name="coffee">coffee from order of client</param>
@@ -145,7 +130,7 @@ namespace CoffeeMachine.Application.Services
         {
             var amountDeal = _getAmountDeal(clientMoney, coffee.CoffeePrice);
 
-            await _banknoteCashboxService.UpdateCashboxAsync(updatedCashbox);
+            await _cashboxService.UpdateCashboxAsync(updatedCashbox);
             _paymentService.AddPayment(clientMoney, coffee.CoffeeId, amountDeal);
             await _incomeService.AddIncomeAsync(coffee.CoffeePrice);
             await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);

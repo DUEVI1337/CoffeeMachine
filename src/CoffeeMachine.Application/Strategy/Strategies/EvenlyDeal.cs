@@ -14,12 +14,15 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class EvenlyDeal : BaseStrategyDeal, IDeal
     {
-        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
+        ///<inheritdoc/>
+        public (List<BanknoteDto>, List<BanknoteCashbox>) GetDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
             var result = (deal, cashbox);
             var weight = 0;
+            var initAmountDeal = amountDeal;
+            cashbox.Sort();
             cashbox.Reverse();
             while (amountDeal != 0)
             {
@@ -93,7 +96,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 return result;
 
             Log.Information($"Strategy {this} fail");
-            return (null, null);
+            return deal.Count != 0 ? result : (null, null);
         }
     }
 }

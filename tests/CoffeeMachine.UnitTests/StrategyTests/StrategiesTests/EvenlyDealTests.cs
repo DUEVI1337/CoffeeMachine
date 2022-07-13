@@ -48,7 +48,7 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
             };
 
             //Act
-            var (dealActual, cashboxActual) = _dealAlgorithm.CalcBanknotesDeal(cashboxInit, amountDeal);
+            var (dealActual, cashboxActual) = _dealAlgorithm.GetDeal(cashboxInit, amountDeal);
 
             //Assert
             dealActual.Should().BeEquivalentTo(dealExpected);
@@ -67,7 +67,7 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
             var amountDeal = 350;
 
             //Act
-            var (dealActual, cashboxActual) = _dealAlgorithm.CalcBanknotesDeal(cashboxInit, amountDeal);
+            var (dealActual, cashboxActual) = _dealAlgorithm.GetDeal(cashboxInit, amountDeal);
 
             //Assert
             Assert.That(dealActual, Is.Null);

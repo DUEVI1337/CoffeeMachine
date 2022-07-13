@@ -22,6 +22,7 @@ namespace CoffeeMachine.Application.Services
             _jwtManager = jwtManager;
         }
 
+        ///<inheritdoc/>
         public async Task RegisterAccountAsync(RegisterDto registerDto)
         {
             if (!await CheckUsernameUniqueAsync(registerDto.Username))
@@ -37,6 +38,7 @@ namespace CoffeeMachine.Application.Services
             await _uow.SaveChangesAsync();
         }
 
+        ///<inheritdoc/>
         public async Task<string> SignInAccountAsync(SignInDto signInDto)
         {
             var user = await _uow.UserRepo.FindAsync(x => x.Username == signInDto.Username);

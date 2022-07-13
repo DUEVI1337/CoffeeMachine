@@ -41,9 +41,9 @@ namespace CoffeeMachine.UnitTests.Strategy
             };
             List<BanknoteCashbox> cashboxExpected = new()
             {
-                new BanknoteCashbox { BanknoteId = cashboxInit[0].BanknoteId, Denomination = 50, CountBanknote = 99 },
+                new BanknoteCashbox { BanknoteId = cashboxInit[2].BanknoteId, Denomination = 200, CountBanknote = 49 },
                 new BanknoteCashbox { BanknoteId = cashboxInit[1].BanknoteId, Denomination = 100, CountBanknote = 69 },
-                new BanknoteCashbox { BanknoteId = cashboxInit[2].BanknoteId, Denomination = 200, CountBanknote = 49 }
+                new BanknoteCashbox { BanknoteId = cashboxInit[0].BanknoteId, Denomination = 50, CountBanknote = 99 }
             };
 
             //Act

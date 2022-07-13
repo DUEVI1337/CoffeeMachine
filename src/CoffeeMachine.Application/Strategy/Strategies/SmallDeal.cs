@@ -14,11 +14,14 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class SmallDeal : BaseStrategyDeal, IDeal
     {
-        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
+        ///<inheritdoc/>
+        public (List<BanknoteDto>, List<BanknoteCashbox>) GetDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
             var result = (deal, cashbox);
+            var initAmountDeal = amountDeal;
+            cashbox.Sort();
             for (var i = 0; i < cashbox.Count; i++)
             {
                 if (cashbox[i].Denomination > amountDeal || cashbox[i].CountBanknote == 0)
@@ -61,7 +64,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             }
 
             Log.Information($"Strategy '{this}' fail");
-            return (null, null);
+            return deal.Count != 0 ? result : (null, null);
         }
     }
 }
