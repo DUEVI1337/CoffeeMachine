@@ -15,7 +15,7 @@ namespace CoffeeMachine.Application.Strategy.Base
         /// </summary>
         /// <param name="cashbox">cashbox of coffee machine</param>
         /// <param name="amountDeal">amount money that need give to client</param>
-        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/></returns>
-        (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox, int amountDeal);
+        /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/> and <see cref="List{T}"/> where T <see cref="BanknoteCashbox"/>, or (null,null)</returns>
+        (List<BanknoteDto>, List<BanknoteCashbox>) GetDeal(List<BanknoteCashbox> cashbox, int amountDeal);
     }
 }

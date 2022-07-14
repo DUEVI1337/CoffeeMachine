@@ -39,22 +39,33 @@ namespace CoffeeMachine.Web
             catch (NotEnoughMoneyException notMoneyEx)
             {
                 var logMessage = "money of client less than price of coffee";
-                await CreateResponseAsync(notMoneyEx, _env, context, logMessage, (int)HttpStatusCode.BadRequest);
+                await CreateResponseAsync(notMoneyEx, context, logMessage, (int)HttpStatusCode.BadRequest);
             }
             catch (NullCashboxException nullCashboxEx)
             {
                 var logMessage = "In cashbox of coffee machine not enough money!";
-                await CreateResponseAsync(nullCashboxEx, _env, context, logMessage, (int)HttpStatusCode.InternalServerError);
+                await CreateResponseAsync(nullCashboxEx, context, logMessage,
+                    (int)HttpStatusCode.InternalServerError);
             }
             catch (NullReferenceException nullEx)
             {
                 var logMessage = "Nof found object";
-                await CreateResponseAsync(nullEx, _env, context, logMessage, (int)HttpStatusCode.NotFound);
+                await CreateResponseAsync(nullEx, context, logMessage, (int)HttpStatusCode.NotFound);
+            }
+            catch (SignInFailException signInEx)
+            {
+                var logMessage = "Invalid username or password";
+                await CreateResponseAsync(signInEx, context, logMessage, (int)HttpStatusCode.BadRequest);
+            }
+            catch (UsernameNotUniqueException usernameEx)
+            {
+                var logMessage = "Not unique 'Username'";
+                await CreateResponseAsync(usernameEx, context, logMessage, (int)HttpStatusCode.BadRequest);
             }
             catch (Exception ex)
             {
                 var logMessage = "Unknown error";
-                await CreateResponseAsync(ex, _env, context, logMessage, (int)HttpStatusCode.InternalServerError);
+                await CreateResponseAsync(ex, context, logMessage, (int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -67,7 +78,7 @@ namespace CoffeeMachine.Web
         /// <param name="logMessage">message that write in console</param>
         /// <param name="statusCode">status code of response</param>
         /// <returns></returns>
-        private async Task CreateResponseAsync(Exception ex, IWebHostEnvironment env, HttpContext context,
+        private async Task CreateResponseAsync(Exception ex, HttpContext context,
             string logMessage, int statusCode)
         {
             context.Response.ContentType = "application/json";
@@ -75,8 +86,8 @@ namespace CoffeeMachine.Web
             Log.Error(logMessage);
             Log.Error(ex.ToString());
 
-            if (env.IsDevelopment())
-                await context.Response.WriteAsJsonAsync($"{ex}");
+            if (_env.IsDevelopment())
+                await context.Response.WriteAsJsonAsync($"Error: {logMessage}; {ex}");
             else
                 await context.Response.WriteAsJsonAsync(logMessage);
         }

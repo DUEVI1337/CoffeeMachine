@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Dto;
@@ -14,17 +15,18 @@ namespace CoffeeMachine.Application.Services.Interfaces
         /// <summary>
         /// Checking price of coffee and client money, calculate deal and if necessary change type deal
         /// </summary>
-        /// <param name="coffee">coffee from order</param>
+        /// <param name="idCoffee">coffee from order</param>
         /// <param name="clientMoney">money that client was injected into the coffee machine</param>
         /// <param name="typeDeal">type of deal that client chose</param>
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/></returns>
-        Task<List<BanknoteDto>> BuyCoffeeAsync(CoffeeDto coffee, List<BanknoteDto> clientMoney, TypeDeal typeDeal);
+        Task<List<BanknoteDto>> BuyCoffeeAsync(string idCoffee, List<BanknoteDto> clientMoney, TypeDeal typeDeal);
 
         /// <summary>
         /// get <see cref="Coffee"/> by him id from database that converts to <see cref="CoffeeDto"/>
         /// </summary>
         /// <param name="id">id coffee</param>
         /// <returns><see cref="CoffeeDto"/> or null</returns>
+        /// <exception cref="NullReferenceException">Not found coffee</exception>
         Task<CoffeeDto> GetCoffeeDtoByIdAsync(string id);
 
         /// <summary>

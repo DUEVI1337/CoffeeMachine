@@ -39,6 +39,11 @@ namespace CoffeeMachine.Infrastructure
         public DbSet<Payment> Payments { get; set; }
 
         /// <summary>
+        /// <see cref="User"/> table in database
+        /// </summary>
+        public DbSet<User> Users { get; set; }
+
+        /// <summary>
         /// init <see cref="Coffee"/>, <see cref="BanknoteCashbox"/> table in database 
         /// </summary>
         /// <param name="builder"></param>
@@ -55,6 +60,7 @@ namespace CoffeeMachine.Infrastructure
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 1000, CountBanknote = 15 },
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 10 },
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 5 });
+            builder.Entity<User>().HasIndex(x => x.Username).IsUnique();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Strategy.Contexts
@@ -26,7 +26,7 @@ namespace CoffeeMachine.Application.Strategy.Contexts
         /// <returns><see cref="List{T}"/> where T <see cref="BanknoteDto"/></returns>
         public (List<BanknoteDto>, List<BanknoteCashbox>) GiveDeal(List<BanknoteCashbox> cashbox, int amountDeal)
         {
-            return _deal.CalcBanknotesDeal(cashbox, amountDeal);
+            return _deal.GetDeal(cashbox, amountDeal);
         }
     }
 }

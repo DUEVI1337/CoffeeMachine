@@ -5,6 +5,8 @@ using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeMachine.Web.Controllers
@@ -14,6 +16,7 @@ namespace CoffeeMachine.Web.Controllers
     /// </summary>
     [Route("coffee/v1")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CoffeeController : Controller
     {
         private readonly ICoffeeService _coffeeService;
@@ -34,9 +37,7 @@ namespace CoffeeMachine.Web.Controllers
         [Route("BuyCoffee")]
         public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
         {
-            var coffee = await _coffeeService.GetCoffeeDtoByIdAsync(order.CoffeeId);
-            var deal = await _coffeeService.BuyCoffeeAsync(coffee, order.Banknotes, (TypeDeal)order.TypeDeal);
-            return deal;
+            return await _coffeeService.BuyCoffeeAsync(order.CoffeeId, order.Banknotes, (TypeDeal)order.TypeDeal);
         }
 
         /// <summary>
@@ -50,8 +51,7 @@ namespace CoffeeMachine.Web.Controllers
         [Route("Coffee/{id}")]
         public async Task<CoffeeDto> GetCoffeeDtoById(string id)
         {
-            var coffee = await _coffeeService.GetCoffeeDtoByIdAsync(id);
-            return coffee;
+            return await _coffeeService.GetCoffeeDtoByIdAsync(id);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace CoffeeMachine.Web.Controllers
         /// <returns><see cref="List{T}"/> where T <see cref="Coffee"/></returns>
         /// <response code="200">return list of coffee from database</response>
         [HttpGet]
-        [Route("MenuCoffee")]
+        [Route("CoffeeMenu")]
         public async Task<List<CoffeeDto>> GetListCoffeeDto()
         {
             return await _coffeeService.GetListCoffeeDtoAsync();

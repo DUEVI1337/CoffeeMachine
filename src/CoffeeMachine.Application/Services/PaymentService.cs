@@ -17,6 +17,7 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
+        ///<inheritdoc/>
         public void AddPayment(int clientMoney, string coffeeId, int amountDeal)
         {
             _uow.PaymentRepo.Add(new Payment

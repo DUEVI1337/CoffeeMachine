@@ -59,11 +59,12 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         [SetUp]
         public void Setup()
         {
-            var _dbOptions = new DbContextOptionsBuilder<DataContext>()
+            var dbOptions = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-            _db = new DataContext(_dbOptions);
+            _db = new DataContext(dbOptions);
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
-                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
+                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db),
+                new UserRepository(_db));
             _balanceService = new BalanceService(uow);
         }
 
@@ -104,7 +105,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
 
             //Assert
             var earnedMoneyBalanceActual =
-                _db.Balances.FirstOrDefault(x => x.CoffeeId == Guid.Parse(coffeeId)).EarnedMoney;
+                _db.Balances.FirstOrDefault(x => x.CoffeeId == Guid.Parse(coffeeId))!.EarnedMoney;
             await _db.DisposeAsync();
             Assert.That(earnedMoneyBalanceActual, Is.EqualTo(earnedMoneyBalanceExpected));
         }

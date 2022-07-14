@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Dto;
-using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
@@ -22,6 +22,43 @@ namespace CoffeeMachine.UnitTests.ServicesTests
     {
         private CoffeeService _coffeeService;
         private DataContext _db;
+
+        [Test]
+        public async Task BuyCoffee_UseDynamicDeal_ReturnCorrectDeal()
+        {
+            //Arrange
+            Coffee coffee = new()
+            {
+                Price = 1000,
+                CoffeeId = Guid.NewGuid(),
+                Name = "Latte"
+            };
+            List<BanknoteCashbox> cashbox = new()
+            {
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 1 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 2 }
+            };
+
+            List<BanknoteDto> clientMoney = new()
+            {
+                new BanknoteDto { CountBanknote = 1, Denomination = 5000 },
+                new BanknoteDto { CountBanknote = 1, Denomination = 2000 },
+            };
+            List<BanknoteDto> dealExpected = new()
+            {
+                new BanknoteDto { Denomination = 2000, CountBanknote = 3 },
+            };
+            var typeDeal = TypeDeal.BigDeal;
+            _db.Coffees.Add(coffee);
+            _db.BanknoteCashboxes.AddRange(cashbox);
+            await _db.SaveChangesAsync();
+
+            //Act
+            var dealActual = await _coffeeService.BuyCoffeeAsync(coffee.CoffeeId.ToString(), clientMoney, typeDeal);
+
+            //Assert
+            dealExpected.Should().BeEquivalentTo(dealActual);
+        }
 
         [Test]
         public async Task BuyCoffee_CheckDeal_ReturnCorrectDeal()
@@ -50,12 +87,12 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             const int amountDealExpected = 1400;
 
             //Act
-            var deal = await _coffeeService.BuyCoffeeAsync(Mapper.MapToCoffeeDto(coffee), clientMoney, typeDeal);
+            var deal = await _coffeeService.BuyCoffeeAsync(coffee.CoffeeId.ToString(), clientMoney, typeDeal);
 
             //Assert
             await _db.DisposeAsync();
             var amountDealActual = deal.Sum(x => x.Denomination * x.CountBanknote);
-            Assert.AreEqual(amountDealExpected, amountDealActual);
+            Assert.That(amountDealActual, Is.EqualTo(amountDealExpected));
         }
 
         [Test]
@@ -119,12 +156,13 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         [SetUp]
         public void Setup()
         {
-            var _dbOptions = new DbContextOptionsBuilder<DataContext>()
+            var dbOptions = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-            _db = new DataContext(_dbOptions);
+            _db = new DataContext(dbOptions);
             _db.Database.EnsureDeleted();
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
-                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
+                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db),
+                new UserRepository(_db));
             _coffeeService = new CoffeeService(uow, new BanknoteCashboxService(uow), new BalanceService(uow),
                 new PaymentService(uow), new IncomeService(uow));
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CoffeeMachine.Domain.Interfaces.Repositories
@@ -21,6 +22,13 @@ namespace CoffeeMachine.Domain.Interfaces.Repositories
         /// </summary>
         /// <param name="entity">deletion object</param>
         void Delete(TEntity entity);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> expression);
 
         /// <summary>
         /// get all entity from database

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using CoffeeMachine.Application.Dto;
 
 namespace CoffeeMachine.Application.Exceptions.CustomExceptions
 {
@@ -23,7 +20,5 @@ namespace CoffeeMachine.Application.Exceptions.CustomExceptions
             : base(message, inner)
         {
         }
-
-        public List<BanknoteDto> ClientMoney { get; set; }
     }
 }

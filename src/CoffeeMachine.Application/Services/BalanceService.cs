@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Mappers;
 using CoffeeMachine.Application.Services.Interfaces;
-using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
@@ -22,12 +22,14 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
+        ///<inheritdoc/>
         public async Task<List<BalanceDto>> GetBalancesDtoAsync()
         {
             var balances = await _uow.BalanceRepo.GetAllAsync();
             return balances.Select(x => Mapper.MapToBalanceDto(x)).ToList();
         }
 
+        ///<inheritdoc/>
         public async Task UpdateBalanceAsync(string coffeeId, int coffeePrice)
         {
             var balances = await _uow.BalanceRepo.GetAllAsync();

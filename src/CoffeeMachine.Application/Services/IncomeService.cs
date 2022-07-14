@@ -10,9 +10,6 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
     public class IncomeService : IIncomeService
     {
         private readonly UnitOfWork _uow;
@@ -22,6 +19,7 @@ namespace CoffeeMachine.Application.Services
             _uow = uow;
         }
 
+        ///<inheritdoc/>
         public async Task AddIncomeAsync(int coffeePrice)
         {
             var income = await _uow.IncomeRepo.GetAllAsync();

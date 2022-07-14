@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Domain.Entities;
 
 using Serilog;
@@ -15,30 +14,30 @@ namespace CoffeeMachine.Application.Strategy.Strategies
     /// </summary>
     public class EvenlyDeal : BaseStrategyDeal, IDeal
     {
-        private readonly Func<List<BanknoteCashbox>, int, List<BanknoteCashbox>> _sortList = (cashbox, deal) =>
-        {
-            cashbox.Sort();
-            cashbox.Reverse();
-            return cashbox.Where(x => x.Denomination >= deal && x.CountBanknote > 0).ToList();
-        };
-
-        public (List<BanknoteDto>, List<BanknoteCashbox>) CalcBanknotesDeal(List<BanknoteCashbox> cashbox,
+        ///<inheritdoc/>
+        public (List<BanknoteDto>, List<BanknoteCashbox>) GetDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
             List<BanknoteDto> deal = new();
-            cashbox = _sortList(cashbox, amountDeal);
+            var result = (deal, cashbox);
+            cashbox.Sort();
+            cashbox.Reverse();
             for (var i = 0; i < cashbox.Count; i++)
             {
+                if (cashbox[i].Denomination > amountDeal || cashbox[i].CountBanknote == 0)
+                {
+                    i = cashbox.FindIndex(x => x.Denomination <= amountDeal && x.CountBanknote > 0);
+                    if (i == -1)
+                        break;
+                }
+
                 amountDeal -= cashbox[i].Denomination;
                 cashbox[i].CountBanknote--;
                 deal = AddBanknoteInDeal(cashbox[i].Denomination, deal, 1);
-                i = CheckDeal(i, cashbox, amountDeal) - 1; //'-1' - next iteration of loop i + 1
-                if (i == -2)
-                    break;
-            }
 
-            if (amountDeal == 0)
-                return (deal, cashbox);
+                if (amountDeal == 0)
+                    return result;
+            }
 
             Log.Information($"Strategy {this} fail");
             return (null, null);

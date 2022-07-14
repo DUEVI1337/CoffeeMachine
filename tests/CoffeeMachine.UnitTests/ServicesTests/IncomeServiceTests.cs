@@ -54,19 +54,20 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
 
             //Assert
-            var totslIncomeActual = _db.Incomes.FirstOrDefault(x => x.Date.Day == DateTime.UtcNow.Day).TotalIncome;
+            var totalIncomeActual = _db.Incomes.FirstOrDefault(x => x.Date.Day == DateTime.UtcNow.Day).TotalIncome;
             await _db.DisposeAsync();
-            Assert.That(totslIncomeActual, Is.EqualTo(totalIncomeExpected));
+            Assert.That(totalIncomeActual, Is.EqualTo(totalIncomeExpected));
         }
 
         [SetUp]
         public void Setup()
         {
-            var _dbOptions = new DbContextOptionsBuilder<DataContext>()
+            var dbOptions = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-            _db = new DataContext(_dbOptions);
+            _db = new DataContext(dbOptions);
             var uow = new UnitOfWork(_db, new CoffeeRepository(_db), new BalanceRepository(_db),
-                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db));
+                new BanknoteCashboxRepository(_db), new PaymentRepository(_db), new IncomeRepository(_db),
+                new UserRepository(_db));
             _incomeService = new IncomeService(uow);
         }
     }

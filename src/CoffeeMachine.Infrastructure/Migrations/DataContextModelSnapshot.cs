@@ -57,43 +57,43 @@ namespace CoffeeMachine.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            BanknoteId = new Guid("df0c6023-58c2-4f9e-8cb6-57d3df7d95ff"),
+                            BanknoteId = new Guid("b25ba405-8a95-4f68-906f-6b565c83feb2"),
                             CountBanknote = 50,
                             Denomination = 50
                         },
                         new
                         {
-                            BanknoteId = new Guid("d0ef9196-b8c1-4650-a5b0-662a41dda7b9"),
+                            BanknoteId = new Guid("0d83dd1e-e17a-4e98-8322-7bd0115bc298"),
                             CountBanknote = 40,
                             Denomination = 100
                         },
                         new
                         {
-                            BanknoteId = new Guid("25d7c364-da5e-473a-a64c-ee19849fba34"),
+                            BanknoteId = new Guid("0e02ee51-af36-4a46-a81f-83704eb16a45"),
                             CountBanknote = 30,
                             Denomination = 200
                         },
                         new
                         {
-                            BanknoteId = new Guid("494c6473-63f0-40c3-9ace-61ea6487b5ec"),
+                            BanknoteId = new Guid("50d91f4e-a198-4019-a45c-d43ff44ea993"),
                             CountBanknote = 20,
                             Denomination = 500
                         },
                         new
                         {
-                            BanknoteId = new Guid("8040df98-0a0e-493c-aa1a-881ed63d7afd"),
+                            BanknoteId = new Guid("70c38472-1346-4661-942f-7f5109ffcf05"),
                             CountBanknote = 15,
                             Denomination = 1000
                         },
                         new
                         {
-                            BanknoteId = new Guid("e66c9691-7cba-4ee2-8b81-7e843512ea57"),
+                            BanknoteId = new Guid("dcf568ce-a3a8-458c-b3c5-c597142a8890"),
                             CountBanknote = 10,
                             Denomination = 2000
                         },
                         new
                         {
-                            BanknoteId = new Guid("2e0f54d8-bb5d-49d4-929e-53e7de42b7fb"),
+                            BanknoteId = new Guid("5bd19c6a-e458-4658-a923-4793b8cb4415"),
                             CountBanknote = 5,
                             Denomination = 5000
                         });
@@ -119,19 +119,19 @@ namespace CoffeeMachine.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            CoffeeId = new Guid("56dc0c27-a56d-4fb9-a899-83d28223fffe"),
+                            CoffeeId = new Guid("ecc10c72-a8ca-4fed-8e87-c1be4de129f8"),
                             Name = "Капучино",
                             Price = 600
                         },
                         new
                         {
-                            CoffeeId = new Guid("0a0151ed-1e06-47ca-956d-8b61e05163eb"),
+                            CoffeeId = new Guid("f5c88077-8eeb-4a88-adc2-1c474fb411af"),
                             Name = "Латте",
                             Price = 850
                         },
                         new
                         {
-                            CoffeeId = new Guid("78f439f3-0804-48f4-96cf-f22c67b2a943"),
+                            CoffeeId = new Guid("bfa64581-25f1-4bb3-950a-c463e555e4be"),
                             Name = "Американо",
                             Price = 900
                         });
@@ -174,6 +174,28 @@ namespace CoffeeMachine.Infrastructure.Migrations
                     b.HasIndex("CoffeeId");
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("CoffeeMachine.Domain.Entities.User", b =>
+                {
+                    b.Property<Guid>("IdUser")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("IdUser");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CoffeeMachine.Domain.Entities.Balance", b =>

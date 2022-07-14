@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
+using CoffeeMachine.Application;
 using CoffeeMachine.Application.Dto;
+using CoffeeMachine.Application.Jwt;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
@@ -15,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
-namespace CoffeeMachine.IntegrationTests
+namespace CoffeeMachine.IntegrationTests.ControllersTests
 {
     public class CoffeeControllerTests
     {
@@ -34,7 +37,9 @@ namespace CoffeeMachine.IntegrationTests
             };
             OrderDto order = new()
             {
-                CoffeeId = Guid.NewGuid().ToString(), TypeDeal = 1, Banknotes = clientMoney
+                CoffeeId = Guid.NewGuid().ToString(),
+                TypeDeal = 1,
+                Banknotes = clientMoney
             };
 
             //Act
@@ -75,7 +80,7 @@ namespace CoffeeMachine.IntegrationTests
             var result = await _client.PostAsJsonAsync("coffee/v1/BuyCoffee", order);
 
             //Assert
-            _db.Database.EnsureDeleted();
+            await _db.Database.EnsureDeletedAsync();
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
@@ -102,7 +107,7 @@ namespace CoffeeMachine.IntegrationTests
             var result = await _client.PostAsJsonAsync("coffee/v1/BuyCoffee", order);
 
             //Assert
-            _db.Database.EnsureDeleted();
+            await _db.Database.EnsureDeletedAsync();
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
 
@@ -120,7 +125,7 @@ namespace CoffeeMachine.IntegrationTests
             var coffeeActual = await _client.GetFromJsonAsync($"coffee/v1/Coffee/{id}", typeof(CoffeeDto));
 
             //Assert
-            _db.Database.EnsureDeleted();
+            await _db.Database.EnsureDeletedAsync();
             coffeeActual.Should().BeEquivalentTo(coffeeExpected);
         }
 
@@ -163,10 +168,10 @@ namespace CoffeeMachine.IntegrationTests
             };
 
             //Act
-            var coffeesActual = await _client.GetFromJsonAsync("coffee/v1/MenuCoffee", typeof(List<CoffeeDto>));
+            var coffeesActual = await _client.GetFromJsonAsync("coffee/v1/CoffeeMenu", typeof(List<CoffeeDto>));
 
             //Assert
-            _db.Database.EnsureDeleted();
+            await _db.Database.EnsureDeletedAsync();
             coffeesActual.Should().BeEquivalentTo(coffeesExpected);
         }
 
@@ -175,8 +180,19 @@ namespace CoffeeMachine.IntegrationTests
         {
             _factory = new WebAppFactory();
             _db = _factory.Services.CreateScope().ServiceProvider.GetService<DataContext>();
-            _db.Database.EnsureDeleted();
+            _db.Database.EnsureDeleted(); //clear init data from db
+            JwtManager jwtManager = new();
+            User user = new()
+            {
+                IdUser = Guid.NewGuid(),
+                Username = "qwe",
+                Password = PasswordProtect.GetPasswordProtect("qwe123")
+            };
+            _db.Users.Add(user);
+            _db.SaveChanges();
             _client = _factory.CreateClient();
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", jwtManager.GenerateJwtToken(user));
         }
     }
 }

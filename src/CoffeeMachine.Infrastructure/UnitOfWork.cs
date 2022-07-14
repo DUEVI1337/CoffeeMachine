@@ -14,7 +14,8 @@ namespace CoffeeMachine.Infrastructure
         private readonly DataContext _db;
 
         public UnitOfWork(DataContext db, CoffeeRepository coffeeRepo, BalanceRepository balanceRepo,
-            BanknoteCashboxRepository banknoteCashboxRepo, PaymentRepository paymentRepo, IncomeRepository incomeRepo)
+            BanknoteCashboxRepository banknoteCashboxRepo, PaymentRepository paymentRepo, IncomeRepository incomeRepo,
+            UserRepository userRepo)
         {
             _db = db;
             CoffeeRepo = coffeeRepo;
@@ -22,6 +23,7 @@ namespace CoffeeMachine.Infrastructure
             BanknoteCashboxRepo = banknoteCashboxRepo;
             PaymentRepo = paymentRepo;
             IncomeRepo = incomeRepo;
+            UserRepo = userRepo;
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace CoffeeMachine.Infrastructure
         public IRepository<Balance> BalanceRepo { get; set; }
 
         /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Balance"/> in database)
+        /// property for DI (ability use basic methods for work with entity <see cref="BanknoteCashbox"/> in database)
         /// </summary>
         public IRepository<BanknoteCashbox> BanknoteCashboxRepo { get; set; }
 
@@ -40,14 +42,19 @@ namespace CoffeeMachine.Infrastructure
         public IRepository<Coffee> CoffeeRepo { get; set; }
 
         /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// property for DI (ability use basic methods for work with entity <see cref="Income"/> in database)
         /// </summary>
         public IRepository<Income> IncomeRepo { get; set; }
 
         /// <summary>
-        /// property for DI (ability use basic methods for work with entity <see cref="Coffee"/> in database)
+        /// property for DI (ability use basic methods for work with entity <see cref="Payment"/> in database)
         /// </summary>
         public IRepository<Payment> PaymentRepo { get; set; }
+
+        /// <summary>
+        /// property for DI (ability use basic methods for work with entity <see cref="User"/> in database)
+        /// </summary>
+        public IRepository<User> UserRepo { get; set; }
 
         /// <summary>
         /// save changes in database after something action with entity in database
