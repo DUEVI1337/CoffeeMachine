@@ -2,7 +2,6 @@
 using System.Linq;
 
 using CoffeeMachine.Application.Dto;
-using CoffeeMachine.Domain.Entities;
 
 namespace CoffeeMachine.Application.Strategy.Base
 {
@@ -11,11 +10,6 @@ namespace CoffeeMachine.Application.Strategy.Base
     /// </summary>
     public abstract class BaseStrategyDeal
     {
-        /// <summary>
-        /// index that stoops loop
-        /// </summary>
-        private const int BREAK_INDEX_LOOP = -1;
-
         /// <summary>
         /// Add banknotes in deal
         /// </summary>

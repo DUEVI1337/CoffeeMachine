@@ -14,6 +14,7 @@ using CoffeeMachine.Infrastructure;
 
 using FluentAssertions;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
@@ -181,7 +182,8 @@ namespace CoffeeMachine.IntegrationTests.ControllersTests
             _factory = new WebAppFactory();
             _db = _factory.Services.CreateScope().ServiceProvider.GetService<DataContext>();
             _db.Database.EnsureDeleted(); //clear init data from db
-            JwtManager jwtManager = new();
+            var config = _factory.Services.GetService<IConfiguration>();
+            JwtManager jwtManager = new(config);
             User user = new()
             {
                 IdUser = Guid.NewGuid(),

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using CoffeeMachine.Application;
 using CoffeeMachine.Application.Jwt;
 using CoffeeMachine.Domain.Entities;
+
+using Microsoft.Extensions.Configuration;
 
 using NUnit.Framework;
 
@@ -14,8 +17,21 @@ namespace CoffeeMachine.UnitTests.JwtTests
         [SetUp]
         public void Setup()
         {
-            _jwtManager = new JwtManager();
+            var appSettings = new Dictionary<string, string>
+            {
+                { "Jwt:Key", "111111111111111111111111" },
+                { "Jwt:Issuer", "Test" },
+                { "Jwt:ExpirationTime", "30" }
+            };
+
+            _config = new ConfigurationBuilder()
+                .AddInMemoryCollection(appSettings)
+                .Build();
+
+            _jwtManager = new JwtManager(_config);
         }
+
+        private IConfiguration _config;
 
         private JwtManager _jwtManager;
 

@@ -8,7 +8,6 @@ using CoffeeMachine.Application.Services.Interfaces;
 using CoffeeMachine.Domain.Entities;
 using CoffeeMachine.Infrastructure;
 
-
 namespace CoffeeMachine.Application.Services
 {
     public class AccountService : IAccountService

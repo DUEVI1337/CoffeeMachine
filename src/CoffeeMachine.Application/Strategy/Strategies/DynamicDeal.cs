@@ -48,6 +48,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                 deal = AddBanknoteInDeal(oneBanknote.Denomination, deal, 1);
                 return;
             }
+
             foreach (var banknote in cashbox.Where(x => x.Denomination <= amountDeal && x.CountBanknote > 0))
             {
                 DynamicCalcBanknotes(amountDeal - banknote.Denomination, cashbox, ref deal);

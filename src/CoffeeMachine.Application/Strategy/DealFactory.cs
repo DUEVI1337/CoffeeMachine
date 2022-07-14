@@ -3,8 +3,6 @@
 using CoffeeMachine.Application.Strategy.Base;
 using CoffeeMachine.Application.Strategy.Strategies;
 
-using Serilog;
-
 namespace CoffeeMachine.Application.Strategy
 {
     /// <summary>

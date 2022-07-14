@@ -7,7 +7,6 @@ using CoffeeMachine.Domain.Entities;
 
 using Serilog;
 
-
 namespace CoffeeMachine.Application.Strategy.Strategies
 {
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application;
@@ -11,6 +12,7 @@ using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Repositories;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 using NUnit.Framework;
 
@@ -22,15 +24,28 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         [SetUp]
         public void Setup()
         {
+            var appSettings = new Dictionary<string, string>
+            {
+                { "Jwt:Key", "111111111111111111111111" },
+                { "Jwt:Issuer", "Test" },
+                { "Jwt:ExpirationTime", "30" }
+            };
+
+            _config = new ConfigurationBuilder()
+                .AddInMemoryCollection(appSettings)
+                .Build();
+
             var dbOpt = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
             var db = new DataContext(dbOpt);
             _uow = new UnitOfWork(db, new CoffeeRepository(db), new BalanceRepository(db),
                 new BanknoteCashboxRepository(db), new PaymentRepository(db), new IncomeRepository(db),
                 new UserRepository(db));
-            _jwtManager = new JwtManager();
+            _jwtManager = new JwtManager(_config);
             _accountService = new AccountService(_uow, _jwtManager);
         }
+
+        private IConfiguration _config;
 
         private JwtManager _jwtManager;
         private UnitOfWork _uow;
@@ -117,7 +132,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             var token = _accountService.SignInAccountAsync(dto);
 
             //Assert
-            Assert.NotNull(token);
+            Assert.That(token.Status, Is.Not.EqualTo(TaskStatus.Faulted));
         }
     }
 }
