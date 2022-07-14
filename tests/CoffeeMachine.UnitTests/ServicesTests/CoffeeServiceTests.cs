@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Dto;
@@ -18,10 +17,47 @@ using NUnit.Framework;
 
 namespace CoffeeMachine.UnitTests.ServicesTests
 {
-    public class CoffeeServiceTesst
+    public class CoffeeServiceTests
     {
         private CoffeeService _coffeeService;
         private DataContext _db;
+
+        [Test]
+        public async Task BuyCoffee_CheckDeal_ReturnCorrectDeal()
+        {
+            //Arrange
+            Coffee coffee = new()
+            {
+                Price = 100,
+                CoffeeId = Guid.NewGuid(),
+                Name = "Latte"
+            };
+            List<BanknoteDto> clientMoney = new()
+            {
+                new BanknoteDto { CountBanknote = 1, Denomination = 500 },
+                new BanknoteDto { CountBanknote = 1, Denomination = 1000 },
+            };
+            List<BanknoteCashbox> cashbox = new()
+            {
+                new BanknoteCashbox { CountBanknote = 30, Denomination = 100, BanknoteId = Guid.NewGuid() },
+                new BanknoteCashbox { CountBanknote = 20, Denomination = 200, BanknoteId = Guid.NewGuid() },
+                new BanknoteCashbox { CountBanknote = 10, Denomination = 500, BanknoteId = Guid.NewGuid() },
+                new BanknoteCashbox { CountBanknote = 5, Denomination = 1000, BanknoteId = Guid.NewGuid() }
+            };
+            var typeDeal = TypeDeal.BigDeal;
+            _db.Coffees.Add(coffee);
+            _db.BanknoteCashboxes.AddRange(cashbox);
+            await _db.SaveChangesAsync();
+            const int amountDealExpected = 1400;
+
+            //Act
+            var deal = await _coffeeService.BuyCoffeeAsync(coffee.CoffeeId.ToString(), clientMoney, typeDeal);
+
+            //Assert
+            await _db.DisposeAsync();
+            var amountDealActual = deal.Sum(x => x.Denomination * x.CountBanknote);
+            Assert.That(amountDealActual, Is.EqualTo(amountDealExpected));
+        }
 
         [Test]
         public async Task BuyCoffee_UseDynamicDeal_ReturnCorrectDeal()
@@ -61,41 +97,6 @@ namespace CoffeeMachine.UnitTests.ServicesTests
         }
 
         [Test]
-        public async Task BuyCoffee_CheckDeal_ReturnCorrectDeal()
-        {
-            //Arrange
-            Coffee coffee = new()
-            {
-                Price = 100, CoffeeId = Guid.NewGuid(), Name = "Latte"
-            };
-            List<BanknoteDto> clientMoney = new()
-            {
-                new BanknoteDto { CountBanknote = 1, Denomination = 500 },
-                new BanknoteDto { CountBanknote = 1, Denomination = 1000 },
-            };
-            List<BanknoteCashbox> cashbox = new()
-            {
-                new BanknoteCashbox { CountBanknote = 30, Denomination = 100, BanknoteId = Guid.NewGuid() },
-                new BanknoteCashbox { CountBanknote = 20, Denomination = 200, BanknoteId = Guid.NewGuid() },
-                new BanknoteCashbox { CountBanknote = 10, Denomination = 500, BanknoteId = Guid.NewGuid() },
-                new BanknoteCashbox { CountBanknote = 5, Denomination = 1000, BanknoteId = Guid.NewGuid() }
-            };
-            var typeDeal = TypeDeal.BigDeal;
-            _db.Coffees.Add(coffee);
-            _db.BanknoteCashboxes.AddRange(cashbox);
-            await _db.SaveChangesAsync();
-            const int amountDealExpected = 1400;
-
-            //Act
-            var deal = await _coffeeService.BuyCoffeeAsync(coffee.CoffeeId.ToString(), clientMoney, typeDeal);
-
-            //Assert
-            await _db.DisposeAsync();
-            var amountDealActual = deal.Sum(x => x.Denomination * x.CountBanknote);
-            Assert.That(amountDealActual, Is.EqualTo(amountDealExpected));
-        }
-
-        [Test]
         public async Task GetCoffeeDtoByIdAsync_AddCoffeeInDb_ReturnCoffeeDto()
         {
             //Arrange
@@ -108,7 +109,8 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
             CoffeeDto coffeeDtoExpected = new()
             {
-                CoffeeId = coffeeInDb[0].CoffeeId.ToString(), CoffeePrice = coffeeInDb[0].Price,
+                CoffeeId = coffeeInDb[0].CoffeeId.ToString(),
+                CoffeePrice = coffeeInDb[0].Price,
                 CoffeeName = coffeeInDb[0].Name
             };
 

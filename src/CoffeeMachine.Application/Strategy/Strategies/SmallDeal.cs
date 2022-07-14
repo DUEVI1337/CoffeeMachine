@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Strategy.Base;
@@ -29,6 +28,7 @@ namespace CoffeeMachine.Application.Strategy.Strategies
                     if (i == -1)
                         break;
                 }
+
                 //allowable number of banknotes to give from cashbox of coffee machine (10% or one banknote)
                 var allowableNumberBanknote = amountDeal > cashbox[i].Denomination
                     ? (float)(0.1 * cashbox[i].CountBanknote)

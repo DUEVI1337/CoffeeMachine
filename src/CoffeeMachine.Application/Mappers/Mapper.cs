@@ -17,7 +17,9 @@ namespace CoffeeMachine.Application.Mappers
         {
             return new()
             {
-                BalanceId = balance.BalanceId, EarnedMoney = balance.EarnedMoney, CoffeeId = balance.CoffeeId
+                BalanceId = balance.BalanceId,
+                EarnedMoney = balance.EarnedMoney,
+                CoffeeId = balance.CoffeeId
             };
         }
 
@@ -29,7 +31,12 @@ namespace CoffeeMachine.Application.Mappers
         public static CoffeeDto MapToCoffeeDto(Coffee coffee)
         {
             return new()
-                { CoffeeId = coffee.CoffeeId.ToString(), CoffeeName = coffee.Name, CoffeePrice = coffee.Price };
+            {
+                CoffeeId = coffee.CoffeeId.ToString(),
+                CoffeeName = coffee.Name,
+                CoffeePrice = coffee.Price
+
+            };
         }
     }
 }

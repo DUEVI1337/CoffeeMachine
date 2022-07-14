@@ -24,6 +24,25 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
         private IDeal _dealAlgorithm;
 
         [Test]
+        public void GetDeal_ImpossibleGiveDeal_ReturnNullAndNull()
+        {
+            //Arrange
+            List<BanknoteCashbox> cashboxInit = new()
+            {
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 1 }
+            };
+
+            const int amountDeal = 350;
+
+            //Act
+            var (dealActual, cashboxActual) = _dealAlgorithm.GetDeal(cashboxInit, amountDeal);
+
+            //Assert
+            Assert.That(dealActual, Is.Null);
+            Assert.That(cashboxActual, Is.Null);
+        }
+
+        [Test]
         public void GetDeal_PossibleGiveDeal_ReturnCorrectDealAndCashbox()
         {
             //Arrange
@@ -66,25 +85,6 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
             };
 
             const int amountDeal = 6000;
-
-            //Act
-            var (dealActual, cashboxActual) = _dealAlgorithm.GetDeal(cashboxInit, amountDeal);
-
-            //Assert
-            Assert.That(dealActual, Is.Null);
-            Assert.That(cashboxActual, Is.Null);
-        }
-
-        [Test]
-        public void GetDeal_ImpossibleGiveDeal_ReturnNullAndNull()
-        {
-            //Arrange
-            List<BanknoteCashbox> cashboxInit = new()
-            {
-                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 1 }
-            };
-
-            const int amountDeal = 350;
 
             //Act
             var (dealActual, cashboxActual) = _dealAlgorithm.GetDeal(cashboxInit, amountDeal);

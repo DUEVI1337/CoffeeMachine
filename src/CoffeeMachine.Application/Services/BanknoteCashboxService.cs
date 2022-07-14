@@ -26,6 +26,18 @@ namespace CoffeeMachine.Application.Services
         }
 
         ///<inheritdoc/>
+        public List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox, int amountDeal)
+        {
+            var copyCashbox = cashbox.Select(banknote => new BanknoteCashbox
+            {
+                BanknoteId = banknote.BanknoteId,
+                CountBanknote = banknote.CountBanknote,
+                Denomination = banknote.Denomination
+            }).Where(x => x.Denomination <= amountDeal && x.CountBanknote > 0).ToList();
+            return copyCashbox;
+        }
+
+        ///<inheritdoc/>
         public async Task UpdateCashboxAsync(List<BanknoteCashbox> updatedCashbox)
         {
             var cashbox = await _uow.BanknoteCashboxRepo.GetAllAsync();
@@ -37,18 +49,6 @@ namespace CoffeeMachine.Application.Services
 
             _uow.BanknoteCashboxRepo.UpdateRange(cashbox);
             Log.Information("Cashbox of coffee machine updated");
-        }
-
-        ///<inheritdoc/>
-        public List<BanknoteCashbox> GetCopyCashbox(List<BanknoteCashbox> cashbox, int amountDeal)
-        {
-            var copyCashbox = cashbox.Select(banknote => new BanknoteCashbox
-            {
-                BanknoteId = banknote.BanknoteId,
-                CountBanknote = banknote.CountBanknote,
-                Denomination = banknote.Denomination
-            }).Where(x => x.Denomination <= amountDeal && x.CountBanknote > 0).ToList();
-            return copyCashbox;
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 using CoffeeMachine.Application.Jwt;
 using CoffeeMachine.Application.Services;
@@ -59,9 +60,9 @@ namespace CoffeeMachine.Web
                 opt.SwaggerDoc("v1", new OpenApiInfo { Title = "CoffeeMachine", Version = "v1" });
 
                 var xmlFileNameWeb = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlFileNameDomain = "CoffeeMachine.Domain.xml";
+                var xmlFileNameApp = "CoffeeMachine.Application.xml";
                 opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameWeb));
-                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameDomain));
+                opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileNameApp));
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -96,14 +97,14 @@ namespace CoffeeMachine.Web
                 {
                     opt.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = JwtOptions.ISSUER,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
                         ValidateIssuer = true,
 
                         ValidateLifetime = true,
 
                         ValidateAudience = false,
 
-                        IssuerSigningKey = JwtOptions.GetSuSymmetricSecurityKey(),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Jwt:Key"])),
                         ValidateIssuerSigningKey = true,
                     };
                 });
