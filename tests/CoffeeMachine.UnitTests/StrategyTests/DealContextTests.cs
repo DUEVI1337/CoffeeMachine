@@ -21,7 +21,7 @@ namespace CoffeeMachine.UnitTests.Strategy
         }
 
         [Test]
-        public void GiveDeal_PassData_ReturnDeal()
+        public void GiveDeal_GetDeal_ReturnDeal()
         {
             //Arrange
             DealContext dealContext = new(new BigDeal());
@@ -55,7 +55,7 @@ namespace CoffeeMachine.UnitTests.Strategy
         }
 
         [Test]
-        public void GiveDeal_PassData_ReturnNull()
+        public void GiveDeal_NotDeal_ReturnNull()
         {
             //Arrange
             DealContext dealContext = new(new BigDeal());

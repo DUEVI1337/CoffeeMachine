@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Dto;
@@ -21,6 +22,43 @@ namespace CoffeeMachine.UnitTests.ServicesTests
     {
         private CoffeeService _coffeeService;
         private DataContext _db;
+
+        [Test]
+        public async Task BuyCoffee_UseDynamicDeal_ReturnCorrectDeal()
+        {
+            //Arrange
+            Coffee coffee = new()
+            {
+                Price = 1000,
+                CoffeeId = Guid.NewGuid(),
+                Name = "Latte"
+            };
+            List<BanknoteCashbox> cashbox = new()
+            {
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 1 },
+                new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 2000, CountBanknote = 2 }
+            };
+
+            List<BanknoteDto> clientMoney = new()
+            {
+                new BanknoteDto { CountBanknote = 1, Denomination = 5000 },
+                new BanknoteDto { CountBanknote = 1, Denomination = 2000 },
+            };
+            List<BanknoteDto> dealExpected = new()
+            {
+                new BanknoteDto { Denomination = 2000, CountBanknote = 3 },
+            };
+            var typeDeal = TypeDeal.BigDeal;
+            _db.Coffees.Add(coffee);
+            _db.BanknoteCashboxes.AddRange(cashbox);
+            await _db.SaveChangesAsync();
+
+            //Act
+            var dealActual = await _coffeeService.BuyCoffeeAsync(coffee.CoffeeId.ToString(), clientMoney, typeDeal);
+
+            //Assert
+            dealExpected.Should().BeEquivalentTo(dealActual);
+        }
 
         [Test]
         public async Task BuyCoffee_CheckDeal_ReturnCorrectDeal()

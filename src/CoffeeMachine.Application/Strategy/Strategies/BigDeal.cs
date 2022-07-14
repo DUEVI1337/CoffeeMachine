@@ -27,26 +27,23 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             foreach (var banknote in cashbox.Where(banknote =>
                          banknote.Denomination <= amountDeal && banknote.CountBanknote > 0))
             {
+                //number of banknotes given denomination to pay off amount of deal
                 var numberBanknoteDeal = amountDeal / banknote.Denomination;
-                if (numberBanknoteDeal <= banknote.CountBanknote)
-                {
-                    amountDeal -= banknote.Denomination * numberBanknoteDeal;
-                    banknote.CountBanknote -= numberBanknoteDeal;
-                }
-                else
-                {
-                    numberBanknoteDeal = banknote.CountBanknote;
-                    amountDeal -= banknote.Denomination * numberBanknoteDeal;
-                    banknote.CountBanknote = 0;
-                }
 
-                deal.Add(new BanknoteDto { Denomination = banknote.Denomination, CountBanknote = numberBanknoteDeal });
+                if (numberBanknoteDeal > banknote.CountBanknote)
+                    numberBanknoteDeal = banknote.CountBanknote;
+
+                amountDeal -= banknote.Denomination * numberBanknoteDeal;
+                banknote.CountBanknote -= numberBanknoteDeal;
+                deal.Add(new BanknoteDto
+                {
+                    Denomination = banknote.Denomination,
+                    CountBanknote = numberBanknoteDeal
+                });
+
                 if (amountDeal == 0)
                     return result;
             }
-
-            if (amountDeal == 0)
-                return result;
 
             Log.Information($"Strategy {this} fail");
             return (null, null);

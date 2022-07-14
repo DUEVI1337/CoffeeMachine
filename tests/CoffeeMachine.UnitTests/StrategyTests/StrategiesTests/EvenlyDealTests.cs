@@ -24,7 +24,7 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
         private IDeal _dealAlgorithm;
 
         [Test]
-        public void CalcBanknotesDeal_PassData_ReturnCorrectDealAndCashbox()
+        public void GetDeal_PossibleGiveDeal_ReturnCorrectDealAndCashbox()
         {
             //Arrange
             List<BanknoteCashbox> cashboxInit = new()
@@ -34,7 +34,7 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 10 }
             };
 
-            var amountDeal = 250;
+            const int amountDeal = 250;
             List<BanknoteDto> dealExpected = new()
             {
                 new BanknoteDto { Denomination = 200, CountBanknote = 1 },
@@ -56,7 +56,7 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
         }
 
         [Test]
-        public void CalcBanknotesDeal_PassData_ReturnNullAndNull()
+        public void GetDeal_ImpossibleGiveDeal_ReturnNullAndNull()
         {
             //Arrange
             List<BanknoteCashbox> cashboxInit = new()
@@ -64,7 +64,7 @@ namespace CoffeeMachine.UnitTests.StrategyTests.StrategiesTests
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 5000, CountBanknote = 1 }
             };
 
-            var amountDeal = 350;
+            const int amountDeal = 350;
 
             //Act
             var (dealActual, cashboxActual) = _dealAlgorithm.GetDeal(cashboxInit, amountDeal);

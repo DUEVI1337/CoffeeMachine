@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using CoffeeMachine.Application.Dto;
 using CoffeeMachine.Application.Strategy.Base;
@@ -12,8 +9,12 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Strategy.Strategies
 {
+    /// <summary>
+    /// strategy that calc banknotes to deal checking all possible options. Based on theory of "Dynamic Programming"
+    /// </summary>
     public class DynamicDeal : BaseStrategyDeal, IDeal
     {
+        ///<inheritdoc/>
         public (List<BanknoteDto>, List<BanknoteCashbox>) GetDeal(List<BanknoteCashbox> cashbox,
             int amountDeal)
         {
@@ -21,40 +22,45 @@ namespace CoffeeMachine.Application.Strategy.Strategies
             var result = (deal, cashbox);
             cashbox.Sort();
             cashbox.Reverse();
-            DynamicCalcBanknotesToDeal(amountDeal, cashbox, ref deal);
-            if(amountDeal == 0)
+
+            DynamicCalcBanknotes(amountDeal, cashbox, ref deal);
+
+            if (deal.Count != 0)
                 return result;
 
             Log.Information($"Strategy {this} fail");
             return (null, null);
         }
 
-        private void DynamicCalcBanknotesToDeal(int amountDeal, List<BanknoteCashbox> cashbox, ref List<BanknoteDto> deal)
+        /// <summary>
+        /// Implementation of "Dynamic Programming"
+        /// </summary>
+        /// <param name="amountDeal">amount of deal</param>
+        /// <param name="cashbox">cashbox of coffee machine</param>
+        /// <param name="deal">amount of money to give client</param>
+        private static void DynamicCalcBanknotes(int amountDeal, List<BanknoteCashbox> cashbox,
+            ref List<BanknoteDto> deal)
         {
-            if (cashbox.Where(x => x.CountBanknote > 0).Select(x => x.Denomination).Contains(amountDeal))
+            var oneBanknote = cashbox.FirstOrDefault(x => x.Denomination == amountDeal && x.CountBanknote > 0);
+            if (oneBanknote != null)
             {
-                var banknote = cashbox.FirstOrDefault(x => x.Denomination == amountDeal);
-                cashbox.FirstOrDefault(x => x.Denomination == amountDeal)!.CountBanknote--;
-                deal = AddBanknoteInDeal(banknote.Denomination, deal, 1);
+                oneBanknote.CountBanknote--;
+                deal = AddBanknoteInDeal(oneBanknote.Denomination, deal, 1);
                 return;
             }
-
             foreach (var banknote in cashbox.Where(x => x.Denomination <= amountDeal && x.CountBanknote > 0))
             {
-                DynamicCalcBanknotesToDeal(amountDeal - banknote.Denomination, cashbox, ref deal);
-                if (deal.Count == 0)
-                    continue;
+                DynamicCalcBanknotes(amountDeal - banknote.Denomination, cashbox, ref deal);
 
-                if (banknote.CountBanknote <= 0) //banknotes ran out on recursion 
+                //banknotes ran out on recursion 
+                if (deal.Count == 0 || banknote.CountBanknote <= 0)
                 {
                     deal.Clear();
-                    break;
+                    continue;
                 }
 
-                deal = AddBanknoteInDeal(banknote.Denomination, deal, 1);
                 banknote.CountBanknote--;
-
-                return;
+                deal = AddBanknoteInDeal(banknote.Denomination, deal, 1);
             }
         }
     }
