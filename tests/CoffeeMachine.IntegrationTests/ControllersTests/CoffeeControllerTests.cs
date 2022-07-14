@@ -74,7 +74,7 @@ namespace CoffeeMachine.IntegrationTests.ControllersTests
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 1000, CountBanknote = 1 },
             };
             _db.Coffees.Add(coffee);
-            _db.BanknoteCashboxes.AddRange(cashbox);
+            _db.BanknotesCashbox.AddRange(cashbox);
             await _db.SaveChangesAsync();
 
             //Act

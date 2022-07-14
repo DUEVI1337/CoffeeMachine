@@ -13,6 +13,9 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
+    /// <summary>
+    /// Work with <see cref="Balance"/> entity from 'Infrastructure' layer
+    /// </summary>
     public class BalanceService : IBalanceService
     {
         private readonly UnitOfWork _uow;
@@ -26,7 +29,7 @@ namespace CoffeeMachine.Application.Services
         public async Task<List<BalanceDto>> GetBalancesDtoAsync()
         {
             var balances = await _uow.BalanceRepo.GetAllAsync();
-            return balances.Select(x => Mapper.MapToBalanceDto(x)).ToList();
+            return balances.Select(Mapper.MapToBalanceDto).ToList();
         }
 
         ///<inheritdoc/>

@@ -17,6 +17,9 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
+    /// <summary>
+    /// Work with <see cref="Coffee"/> entity from 'Infrastructure' layer. For CoffeeController.
+    /// </summary>
     public class CoffeeService : ICoffeeService
 
     {
@@ -39,22 +42,24 @@ namespace CoffeeMachine.Application.Services
         }
 
         ///<inheritdoc/>
-        public async Task<List<BanknoteDto>> BuyCoffeeAsync(string idCoffee, List<BanknoteDto> clientMoney,
-            TypeDeal typeDeal)
+        public async Task<List<BanknoteDto>> BuyCoffeeAsync(OrderDto dto)
         {
-            var coffee = await GetCoffeeDtoByIdAsync(idCoffee);
-            var amountClientMoney = GetAmountClientMoney(clientMoney);
+            var coffee = await GetCoffeeDtoByIdAsync(dto.CoffeeId);
+            var amountClientMoney = GetAmountClientMoney(dto.Banknotes);
             var cashbox = await _cashboxService.GetCashboxAsync();
-            var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice); //money that need give client
 
-            if (!СheckPossibleGiveDeal(amountDeal, cashbox))
+            //money that need give client
+            var amountDeal = _getAmountDeal(amountClientMoney, coffee.CoffeePrice);
+
+            if (!CheckPossibleGiveDeal(amountDeal, cashbox))
                 return null;
 
-            clientMoney.ForEach(x =>
+            //add client money in cashbox of coffee machine
+            dto.Banknotes.ForEach(x =>
                 cashbox.FirstOrDefault(y => y.Denomination == x.Denomination)!.CountBanknote +=
-                    x.CountBanknote); //add client money in cashbox of coffee machine
+                    x.CountBanknote);
 
-            var (deal, updatedCashbox) = ExecuteStrategyDeal(typeDeal, cashbox, amountDeal);
+            var (deal, updatedCashbox) = ExecuteStrategyDeal((TypeDeal)dto.TypeDeal, cashbox, amountDeal);
             await SaveChangesInDbAsync(coffee, updatedCashbox, amountClientMoney);
             return deal;
         }
@@ -73,7 +78,26 @@ namespace CoffeeMachine.Application.Services
         public async Task<List<CoffeeDto>> GetListCoffeeDtoAsync()
         {
             var coffees = await _uow.CoffeeRepo.GetAllAsync();
-            return coffees.Select(x => Mapper.MapToCoffeeDto(x)).ToList();
+            return coffees.Select(Mapper.MapToCoffeeDto).ToList();
+        }
+
+        /// <summary>
+        /// Checking possible give deal to client
+        /// </summary>
+        /// <param name="amountDeal">amount money that need give client</param>
+        /// <param name="cashbox">cashbox of coffee machine</param>
+        /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
+        /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
+        /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
+        private static bool CheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
+        {
+            if (amountDeal < 0)
+                throw new NotEnoughMoneyException();
+
+            if (!cashbox.Select(x => x.CountBanknote != 0).Any())
+                throw new NullCashboxException();
+
+            return amountDeal != 0;
         }
 
         /// <summary>
@@ -88,18 +112,17 @@ namespace CoffeeMachine.Application.Services
             List<BanknoteCashbox> cashbox, int amountDeal)
         {
             _dealContext = new DealContext(DealFactory.GetDealStrategy(typeDeal.ToString()));
-            var (deal, updatedCashbox) =
+            (List<BanknoteDto> deal, List<BanknoteCashbox> updateCashbox) result =
                 _dealContext.GiveDeal(_cashboxService.GetCopyCashbox(cashbox, amountDeal), amountDeal);
-            if (deal != null)
-                return (deal, updatedCashbox);
+            if (result.deal != null)
+                return result;
 
             _dealContext = new DealContext(new DynamicDeal());
-            (deal, updatedCashbox) =
-                _dealContext.GiveDeal(_cashboxService.GetCopyCashbox(cashbox, amountDeal), amountDeal);
-            if (deal == null)
+            result = _dealContext.GiveDeal(_cashboxService.GetCopyCashbox(cashbox, amountDeal), amountDeal);
+            if (result.deal == null)
                 throw new NullCashboxException();
 
-            return (deal, updatedCashbox);
+            return result;
         }
 
         /// <summary>
@@ -136,25 +159,6 @@ namespace CoffeeMachine.Application.Services
             await _balanceService.UpdateBalanceAsync(coffee.CoffeeId, coffee.CoffeePrice);
             await _uow.SaveChangesAsync();
             Log.Information("New data updated in database");
-        } // вынести например в uow
-
-        /// <summary>
-        /// Checking possible give deal to client
-        /// </summary>
-        /// <param name="amountDeal">amount money that need give client</param>
-        /// <param name="cashbox">cashbox of coffee machine</param>
-        /// <returns><see cref="bool"/>, 'true' if possible give deal, 'false' deal is zero</returns>
-        /// <exception cref="NotEnoughMoneyException">not enough client of money for buying coffee</exception>
-        /// <exception cref="NullCashboxException">In cashbox of coffee machine not enough money</exception>
-        private bool СheckPossibleGiveDeal(int amountDeal, List<BanknoteCashbox> cashbox)
-        {
-            if (amountDeal < 0)
-                throw new NotEnoughMoneyException();
-
-            if (!cashbox.Select(x => x.CountBanknote != 0).Any())
-                throw new NullCashboxException();
-
-            return amountDeal != 0;
         }
     }
 }

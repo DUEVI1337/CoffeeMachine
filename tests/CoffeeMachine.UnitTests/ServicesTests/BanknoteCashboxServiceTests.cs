@@ -30,7 +30,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 100, CountBanknote = 10 },
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), Denomination = 200, CountBanknote = 10 },
             };
-            _db.BanknoteCashboxes.AddRange(cashboxExpected);
+            _db.BanknotesCashbox.AddRange(cashboxExpected);
             await _db.SaveChangesAsync();
 
             //Act
@@ -63,7 +63,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), CountBanknote = 10, Denomination = 100 },
                 new BanknoteCashbox { BanknoteId = Guid.NewGuid(), CountBanknote = 10, Denomination = 200 }
             };
-            _db.BanknoteCashboxes.AddRange(cashboxInDb);
+            _db.BanknotesCashbox.AddRange(cashboxInDb);
             await _db.SaveChangesAsync();
             List<BanknoteCashbox> cashboxExpected = new()
             {
@@ -76,7 +76,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             await _db.SaveChangesAsync();
 
             //Assert
-            var cashboxActual = _db.BanknoteCashboxes.ToList();
+            var cashboxActual = _db.BanknotesCashbox.ToList();
             await _db.DisposeAsync();
             cashboxActual.Should().BeEquivalentTo(cashboxExpected);
         }

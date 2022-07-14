@@ -10,6 +10,9 @@ using CoffeeMachine.Infrastructure;
 
 namespace CoffeeMachine.Application.Services
 {
+    /// <summary>
+    /// Work with user account
+    /// </summary>
     public class AccountService : IAccountService
     {
         private readonly JwtManager _jwtManager;

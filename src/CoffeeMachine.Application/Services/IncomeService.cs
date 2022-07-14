@@ -10,6 +10,9 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
+    /// <summary>
+    /// Work with <see cref="Income"/> entity from 'Infrastructure' layer
+    /// </summary>
     public class IncomeService : IIncomeService
     {
         private readonly UnitOfWork _uow;

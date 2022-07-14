@@ -31,13 +31,13 @@ namespace CoffeeMachine.Web.Controllers
         /// </summary>
         /// <param name="order">order person</param>
         /// <response code="200">return deal</response>
-        /// <response code="400">it is impossible to give change</response>
         /// <response code="404">not found coffee</response>
+        /// <response code="500">it is impossible to give change</response>
         [HttpPost]
         [Route("BuyCoffee")]
         public async Task<List<BanknoteDto>> BuyCoffee([FromBody] OrderDto order)
         {
-            return await _coffeeService.BuyCoffeeAsync(order.CoffeeId, order.Banknotes, (TypeDeal)order.TypeDeal);
+            return await _coffeeService.BuyCoffeeAsync(order);
         }
 
         /// <summary>

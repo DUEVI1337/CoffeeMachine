@@ -8,6 +8,9 @@ using Serilog;
 
 namespace CoffeeMachine.Application.Services
 {
+    /// <summary>
+    /// Work with <see cref="Payment"/> entity from 'Infrastructure' layer
+    /// </summary>
     public class PaymentService : IPaymentService
     {
         private readonly UnitOfWork _uow;

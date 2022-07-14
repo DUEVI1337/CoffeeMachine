@@ -21,7 +21,7 @@ namespace CoffeeMachine.Infrastructure
         /// <summary>
         /// <see cref="BanknoteCashbox"/> table in database
         /// </summary>
-        public DbSet<BanknoteCashbox> BanknoteCashboxes { get; set; }
+        public DbSet<BanknoteCashbox> BanknotesCashbox { get; set; }
 
         /// <summary>
         /// <see cref="Coffee"/> table in database

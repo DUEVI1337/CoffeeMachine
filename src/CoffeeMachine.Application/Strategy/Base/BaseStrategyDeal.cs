@@ -21,11 +21,18 @@ namespace CoffeeMachine.Application.Strategy.Base
             int numberBanknote)
         {
             if (!dealBanknotes.Select(x => x.Denomination).Contains(banknoteDenomination))
+            {
                 dealBanknotes.Add(new BanknoteDto
-                    { Denomination = banknoteDenomination, CountBanknote = numberBanknote });
+                {
+                    Denomination = banknoteDenomination,
+                    CountBanknote = numberBanknote
+                });
+            }
             else
+            {
                 dealBanknotes.FirstOrDefault(x => x.Denomination == banknoteDenomination)!.CountBanknote +=
                     numberBanknote;
+            }
 
             return dealBanknotes;
         }

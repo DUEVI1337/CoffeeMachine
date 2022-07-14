@@ -46,7 +46,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             };
             var typeDeal = TypeDeal.BigDeal;
             _db.Coffees.Add(coffee);
-            _db.BanknoteCashboxes.AddRange(cashbox);
+            _db.BanknotesCashbox.AddRange(cashbox);
             await _db.SaveChangesAsync();
             const int amountDealExpected = 1400;
 
@@ -86,7 +86,7 @@ namespace CoffeeMachine.UnitTests.ServicesTests
             };
             var typeDeal = TypeDeal.BigDeal;
             _db.Coffees.Add(coffee);
-            _db.BanknoteCashboxes.AddRange(cashbox);
+            _db.BanknotesCashbox.AddRange(cashbox);
             await _db.SaveChangesAsync();
 
             //Act
